@@ -29,9 +29,12 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import eu.kanade.domain.ui.UiPreferences
+import eu.kanade.domain.ui.model.AppTheme
 import eu.kanade.presentation.category.components.ChangeCategoryDialog
 import eu.kanade.presentation.entries.components.LibraryBottomActionMenu
 import eu.kanade.presentation.library.DeleteLibraryEntryDialog
+import eu.kanade.presentation.library.anime.AnimeLibraryAuroraContent
 import eu.kanade.presentation.library.anime.AnimeLibraryContent
 import eu.kanade.presentation.library.anime.AnimeLibrarySettingsDialog
 import eu.kanade.presentation.library.components.LibraryToolbar
@@ -64,6 +67,9 @@ import tachiyomi.presentation.core.screens.EmptyScreen
 import tachiyomi.presentation.core.screens.EmptyScreenAction
 import tachiyomi.presentation.core.screens.LoadingScreen
 import tachiyomi.source.local.entries.anime.isLocal
+import tachiyomi.presentation.core.util.collectAsState
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
 
 data object AnimeLibraryTab : Tab {
@@ -99,6 +105,9 @@ data object AnimeLibraryTab : Tab {
         val screenModel = rememberScreenModel { AnimeLibraryScreenModel() }
         val settingsScreenModel = rememberScreenModel { AnimeLibrarySettingsScreenModel() }
         val state by screenModel.state.collectAsState()
+        
+        val uiPreferences = Injekt.get<UiPreferences>()
+        val theme by uiPreferences.appTheme().collectAsState()
 
         val snackbarHostState = remember { SnackbarHostState() }
 
@@ -121,6 +130,8 @@ data object AnimeLibraryTab : Tab {
 
         Scaffold(
             topBar = { scrollBehavior ->
+                if (theme == AppTheme.AURORA) return@Scaffold
+
                 val title = state.getToolbarTitle(
                     defaultTitle = defaultTitle,
                     defaultCategoryTitle = stringResource(MR.strings.label_default),
@@ -193,42 +204,52 @@ data object AnimeLibraryTab : Tab {
                     )
                 }
                 else -> {
-                    AnimeLibraryContent(
-                        categories = state.categories,
-                        searchQuery = state.searchQuery,
-                        selection = state.selection,
-                        contentPadding = contentPadding,
-                        currentPage = { screenModel.activeCategoryIndex },
-                        hasActiveFilters = state.hasActiveFilters,
-                        showPageTabs = state.showCategoryTabs || !state.searchQuery.isNullOrEmpty(),
-                        onChangeCurrentPage = { screenModel.activeCategoryIndex = it },
-                        onAnimeClicked = { navigator.push(AnimeScreen(it)) },
-                        onContinueWatchingClicked = { it: LibraryAnime ->
-                            scope.launchIO {
-                                val episode = screenModel.getNextUnseenEpisode(it.anime)
-                                if (episode != null) openEpisode(episode)
-                            }
-                            Unit
-                        }.takeIf { state.showAnimeContinueButton },
-                        onToggleSelection = screenModel::toggleSelection,
-                        onToggleRangeSelection = {
-                            screenModel.toggleRangeSelection(it)
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        },
-                        onRefresh = onClickRefresh,
-                        onGlobalSearchClicked = {
-                            navigator.push(
-                                GlobalAnimeSearchScreen(screenModel.state.value.searchQuery ?: ""),
-                            )
-                        },
-                        getNumberOfAnimeForCategory = { state.getAnimeCountForCategory(it) },
-                        getDisplayMode = { screenModel.getDisplayMode() },
-                        getColumnsForOrientation = {
-                            screenModel.getColumnsPreferenceForCurrentOrientation(
-                                it,
-                            )
-                        },
-                    ) { state.getAnimelibItemsByPage(it) }
+                    if (theme == AppTheme.AURORA) {
+                        val currentCategoryItems = state.getAnimelibItemsByPage(screenModel.activeCategoryIndex)
+                        val libraryItems = currentCategoryItems.map { it.libraryAnime }
+                        AnimeLibraryAuroraContent(
+                            items = libraryItems,
+                            onAnimeClicked = { navigator.push(AnimeScreen(it)) },
+                            contentPadding = contentPadding
+                        )
+                    } else {
+                        AnimeLibraryContent(
+                            categories = state.categories,
+                            searchQuery = state.searchQuery,
+                            selection = state.selection,
+                            contentPadding = contentPadding,
+                            currentPage = { screenModel.activeCategoryIndex },
+                            hasActiveFilters = state.hasActiveFilters,
+                            showPageTabs = state.showCategoryTabs || !state.searchQuery.isNullOrEmpty(),
+                            onChangeCurrentPage = { screenModel.activeCategoryIndex = it },
+                            onAnimeClicked = { navigator.push(AnimeScreen(it)) },
+                            onContinueWatchingClicked = { it: LibraryAnime ->
+                                scope.launchIO {
+                                    val episode = screenModel.getNextUnseenEpisode(it.anime)
+                                    if (episode != null) openEpisode(episode)
+                                }
+                                Unit
+                            }.takeIf { state.showAnimeContinueButton },
+                            onToggleSelection = screenModel::toggleSelection,
+                            onToggleRangeSelection = {
+                                screenModel.toggleRangeSelection(it)
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            },
+                            onRefresh = onClickRefresh,
+                            onGlobalSearchClicked = {
+                                navigator.push(
+                                    GlobalAnimeSearchScreen(screenModel.state.value.searchQuery ?: ""),
+                                )
+                            },
+                            getNumberOfAnimeForCategory = { state.getAnimeCountForCategory(it) },
+                            getDisplayMode = { screenModel.getDisplayMode() },
+                            getColumnsForOrientation = {
+                                screenModel.getColumnsPreferenceForCurrentOrientation(
+                                    it,
+                                )
+                            },
+                        ) { state.getAnimelibItemsByPage(it) }
+                    }
                 }
             }
         }

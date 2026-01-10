@@ -1,13 +1,14 @@
 package eu.kanade.tachiyomi.ui.more
 
+import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalUriHandler
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
@@ -18,13 +19,20 @@ import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import eu.kanade.core.preference.asState
 import eu.kanade.domain.base.BasePreferences
+import eu.kanade.domain.ui.UiPreferences
+import eu.kanade.domain.ui.model.AppTheme
+import eu.kanade.domain.ui.model.NavStyle
 import eu.kanade.presentation.more.MoreScreen
+import eu.kanade.presentation.more.MoreScreenAurora
+import eu.kanade.presentation.more.settings.screen.about.AboutScreen
 import eu.kanade.presentation.util.Tab
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.core.common.Constants
 import eu.kanade.tachiyomi.data.download.anime.AnimeDownloadManager
 import eu.kanade.tachiyomi.data.download.manga.MangaDownloadManager
 import eu.kanade.tachiyomi.ui.category.CategoriesTab
 import eu.kanade.tachiyomi.ui.download.DownloadsTab
+import eu.kanade.tachiyomi.ui.history.HistoriesTab
 import eu.kanade.tachiyomi.ui.setting.PlayerSettingsScreen
 import eu.kanade.tachiyomi.ui.setting.SettingsScreen
 import eu.kanade.tachiyomi.ui.stats.StatsTab
@@ -37,11 +45,13 @@ import kotlinx.coroutines.flow.combine
 import tachiyomi.core.common.util.lang.launchIO
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.i18n.stringResource
+import tachiyomi.presentation.core.util.collectAsState as preferenceCollectAsState
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
 data object MoreTab : Tab {
 
+    @OptIn(ExperimentalAnimationGraphicsApi::class)
     override val options: TabOptions
         @Composable
         get() {
@@ -60,39 +70,65 @@ data object MoreTab : Tab {
 
     @Composable
     override fun Content() {
-        val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val screenModel = rememberScreenModel { MoreScreenModel() }
-        val downloadQueueState by screenModel.downloadQueueState.collectAsState()
-        val navStyle = currentNavigationStyle()
-        MoreScreen(
-            downloadQueueStateProvider = { downloadQueueState },
-            downloadedOnly = screenModel.downloadedOnly,
-            onDownloadedOnlyChange = { screenModel.downloadedOnly = it },
-            incognitoMode = screenModel.incognitoMode,
-            onIncognitoModeChange = { screenModel.incognitoMode = it },
-            navStyle = navStyle,
-            onClickAlt = { navigator.push(navStyle.moreTab) },
-            onClickDownloadQueue = { navigator.push(DownloadsTab) },
-            onClickCategories = { navigator.push(CategoriesTab) },
-            onClickStats = { navigator.push(StatsTab) },
-            onClickStorage = { navigator.push(StorageTab) },
-            onClickDataAndStorage = { navigator.push(SettingsScreen(SettingsScreen.Destination.DataAndStorage)) },
-            onClickPlayerSettings = { navigator.push(PlayerSettingsScreen(mainSettings = false)) },
-            onClickSettings = { navigator.push(SettingsScreen()) },
-            onClickAbout = { navigator.push(SettingsScreen(SettingsScreen.Destination.About)) },
-        )
+        val downloadQueueState by screenModel.downloadQueueState.collectAsState(DownloadQueueState.Stopped)
+        val uriHandler = LocalUriHandler.current
+        
+        val uiPreferences = Injekt.get<UiPreferences>()
+        val theme by uiPreferences.appTheme().preferenceCollectAsState()
+
+        if (theme == AppTheme.AURORA) {
+            MoreScreenAurora(
+                downloadedOnly = screenModel.getDownloadedOnly(),
+                onDownloadedOnlyChange = { screenModel.toggleDownloadedOnly() },
+                incognitoMode = screenModel.getIncognitoMode(),
+                onIncognitoModeChange = { screenModel.toggleIncognitoMode() },
+                onDownloadClick = { navigator.push(DownloadsTab) },
+                onSettingsClick = { navigator.push(SettingsScreen()) },
+                onAboutClick = { navigator.push(AboutScreen) },
+                onStatsClick = { navigator.push(StatsTab) },
+                onHelpClick = { uriHandler.openUri(Constants.URL_HELP) },
+            )
+        } else {
+            val navStyle = currentNavigationStyle()
+            MoreScreen(
+                downloadQueueStateProvider = { downloadQueueState },
+                downloadedOnly = screenModel.getDownloadedOnly(),
+                onDownloadedOnlyChange = { screenModel.toggleDownloadedOnly() },
+                incognitoMode = screenModel.getIncognitoMode(),
+                onIncognitoModeChange = { screenModel.toggleIncognitoMode() },
+                navStyle = navStyle,
+                onClickAlt = { navigator.push(navStyle.moreTab) },
+                onClickDownloadQueue = { navigator.push(DownloadsTab) },
+                onClickCategories = { navigator.push(CategoriesTab) },
+                onClickStats = { navigator.push(StatsTab) },
+                onClickStorage = { navigator.push(StorageTab) },
+                onClickDataAndStorage = { navigator.push(SettingsScreen(SettingsScreen.Destination.DataAndStorage)) },
+                onClickPlayerSettings = { navigator.push(PlayerSettingsScreen(mainSettings = false)) },       
+                onClickSettings = { navigator.push(SettingsScreen()) },
+                onClickAbout = { navigator.push(AboutScreen) },
+            )
+        }
     }
 }
 
-private class MoreScreenModel(
+class MoreScreenModel(
     private val downloadManager: MangaDownloadManager = Injekt.get(),
     private val animeDownloadManager: AnimeDownloadManager = Injekt.get(),
-    preferences: BasePreferences = Injekt.get(),
+    private val preferences: BasePreferences = Injekt.get(),
 ) : ScreenModel {
 
-    var downloadedOnly by preferences.downloadedOnly().asState(screenModelScope)
-    var incognitoMode by preferences.incognitoMode().asState(screenModelScope)
+    fun getDownloadedOnly(): Boolean = preferences.downloadedOnly().get()
+    fun getIncognitoMode(): Boolean = preferences.incognitoMode().get()
+
+    fun toggleDownloadedOnly() {
+        preferences.downloadedOnly().set(!getDownloadedOnly())
+    }
+
+    fun toggleIncognitoMode() {
+        preferences.incognitoMode().set(!getIncognitoMode())
+    }
 
     private var _downloadQueueState: MutableStateFlow<DownloadQueueState> = MutableStateFlow(
         DownloadQueueState.Stopped,
@@ -105,7 +141,7 @@ private class MoreScreenModel(
             combine(
                 downloadManager.isDownloaderRunning,
                 downloadManager.queueState,
-            ) { isRunningManga, mangaDownloadQueue -> Pair(isRunningManga, mangaDownloadQueue.size) }
+            ) { isRunningManga, mangaDownloadQueue -> Pair(isRunningManga, mangaDownloadQueue.size) }     
                 .collectLatest { (isDownloadingManga, mangaDownloadQueueSize) ->
                     combine(
                         animeDownloadManager.isDownloaderRunning,
@@ -118,7 +154,7 @@ private class MoreScreenModel(
                     }
                         .collectLatest { (isDownloadingAnime, animeDownloadQueueSize) ->
                             val isDownloading = isDownloadingAnime || isDownloadingManga
-                            val downloadQueueSize = mangaDownloadQueueSize + animeDownloadQueueSize
+                            val downloadQueueSize = mangaDownloadQueueSize + animeDownloadQueueSize       
                             val pendingDownloadExists = downloadQueueSize != 0
                             _downloadQueueState.value = when {
                                 !pendingDownloadExists -> DownloadQueueState.Stopped

@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -36,6 +38,7 @@ import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.domain.ui.UiPreferences
+import eu.kanade.domain.ui.model.AppTheme
 import eu.kanade.presentation.util.Screen
 import eu.kanade.presentation.util.isTabletUi
 import eu.kanade.tachiyomi.ui.browse.BrowseTab
@@ -43,6 +46,7 @@ import eu.kanade.tachiyomi.ui.download.DownloadsTab
 import eu.kanade.tachiyomi.ui.entries.anime.AnimeScreen
 import eu.kanade.tachiyomi.ui.entries.manga.MangaScreen
 import eu.kanade.tachiyomi.ui.history.HistoriesTab
+import eu.kanade.tachiyomi.ui.home.HomeHubTab
 import eu.kanade.tachiyomi.ui.library.anime.AnimeLibraryTab
 import eu.kanade.tachiyomi.ui.library.manga.MangaLibraryTab
 import eu.kanade.tachiyomi.ui.more.MoreTab
@@ -81,6 +85,8 @@ object HomeScreen : Screen() {
     @Composable
     override fun Content() {
         val navStyle by uiPreferences.navStyle().collectAsState()
+        val theme by uiPreferences.appTheme().collectAsState()
+        val isAurora = theme == AppTheme.AURORA
         val navigator = LocalNavigator.currentOrThrow
         TabNavigator(
             tab = defaultTab,
@@ -108,9 +114,11 @@ object HomeScreen : Screen() {
                                 enter = expandVertically(),
                                 exit = shrinkVertically(),
                             ) {
-                                NavigationBar {
+                                NavigationBar(
+                                    containerColor = if (isAurora) Color(0xFF101b22).copy(alpha = 0.95f) else MaterialTheme.colorScheme.surfaceContainer,
+                                ) {
                                     navStyle.tabs.fastForEach {
-                                        NavigationBarItem(it)
+                                        NavigationBarItem(it, isAurora)
                                     }
                                 }
                             }
@@ -184,6 +192,7 @@ object HomeScreen : Screen() {
                                 BrowseTab
                             }
                             is Tab.More -> MoreTab
+                            is Tab.HomeHub -> HomeHubTab
                         }
 
                         if (it is Tab.AnimeLib && it.animeIdToOpen != null) {
@@ -202,11 +211,24 @@ object HomeScreen : Screen() {
     }
 
     @Composable
-    private fun RowScope.NavigationBarItem(tab: eu.kanade.presentation.util.Tab) {
+    private fun RowScope.NavigationBarItem(tab: eu.kanade.presentation.util.Tab, isAurora: Boolean) {
         val tabNavigator = LocalTabNavigator.current
         val navigator = LocalNavigator.currentOrThrow
         val scope = rememberCoroutineScope()
         val selected = tabNavigator.current::class == tab::class
+        
+        val colors = if (isAurora) {
+            NavigationBarItemDefaults.colors(
+                selectedIconColor = Color(0xFF279df1),
+                selectedTextColor = Color(0xFF279df1),
+                indicatorColor = Color(0xFF279df1).copy(alpha = 0.1f),
+                unselectedIconColor = Color.White.copy(alpha = 0.6f),
+                unselectedTextColor = Color.White.copy(alpha = 0.6f)
+            )
+        } else {
+            NavigationBarItemDefaults.colors()
+        }
+
         NavigationBarItem(
             selected = selected,
             onClick = {
@@ -226,6 +248,7 @@ object HomeScreen : Screen() {
                 )
             },
             alwaysShowLabel = true,
+            colors = colors
         )
     }
 
@@ -339,5 +362,6 @@ object HomeScreen : Screen() {
         data object History : Tab
         data class Browse(val toExtensions: Boolean = false, val anime: Boolean = false) : Tab
         data class More(val toDownloads: Boolean) : Tab
+        data object HomeHub : Tab
     }
 }

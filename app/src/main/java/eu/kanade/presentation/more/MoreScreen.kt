@@ -115,6 +115,7 @@ fun MoreScreen(
                                 pending,
                             )
                         }
+                        else -> null
                     },
                     icon = Icons.Outlined.GetApp,
                     onPreferenceClick = onClickDownloadQueue,

@@ -525,4 +525,78 @@
     <string name="action_remove_fillermark_episode">Снять пометку филлера с серии</string>
     <string name="pref_download_fillermarked_items">Разрешить загрузку серий помеченных как филлер</string>
     <string name="label_player">Плеер</string>
+
+    <!-- Aurora Theme Strings -->
+    <!-- Home Screen -->
+    <string name="aurora_welcome_back">С возвращением</string>
+    <string name="aurora_home">Главная</string>
+    <string name="aurora_continue_watching">Продолжить просмотр</string>
+    <string name="aurora_continue_watching_header">ПРОДОЛЖИТЬ ПРОСМОТР</string>
+    <string name="aurora_play">Смотреть</string>
+    <string name="aurora_details">Подробнее</string>
+    <string name="aurora_view_all">Показать все</string>
+    <string name="aurora_episode_number">Эпизод %s</string>
+    <string name="aurora_recently_added">Недавно добавленные</string>
+    <string name="aurora_more">Ещё</string>
+    <string name="aurora_change_nickname">Изменить имя</string>
+    <string name="aurora_nothing_to_continue">Нечего продолжать</string>
+    <string name="aurora_add_anime_to_library">Добавьте аниме в библиотеку, чтобы увидеть их здесь</string>
+
+    <!-- Browse Screen -->
+    <string name="aurora_browse">Обзор</string>
+    <string name="aurora_discover_sources">Найти источники аниме</string>
+    <string name="aurora_global_search">Глобальный поиск</string>
+    <string name="aurora_extensions">Расширения</string>
+    <string name="aurora_migrate">Миграция</string>
+    <string name="aurora_pinned_sources">Закреплённые источники</string>
+    <string name="aurora_pinned_badge">ЗАКРЕПЛЕНО</string>
+    <string name="aurora_sources">Источники</string>
+
+    <!-- Updates Screen -->
+    <string name="aurora_updates">Обновления</string>
+    <string name="aurora_new_episodes_subtitle">Новые эпизоды из вашей библиотеки</string>
+    <string name="aurora_no_new_episodes">Нет новых эпизодов</string>
+    <string name="aurora_library_up_to_date">Ваша библиотека обновлена!\nНажмите обновить, чтобы проверить новые эпизоды.</string>
+    <string name="aurora_update_library">Обновить библиотеку</string>
+    <string name="aurora_refresh_library">Обновить библиотеку</string>
+    <string name="aurora_updating_library">Обновление библиотеки...</string>
+    <string name="aurora_update_already_running">Обновление уже запущено</string>
+
+    <!-- Statistics Screen -->
+    <string name="aurora_anime_statistics">Статистика аниме</string>
+    <string name="aurora_in_library">В библиотеке</string>
+    <string name="aurora_watch_time">Время просмотра</string>
+    <string name="aurora_completed">Завершено</string>
+    <string name="aurora_titles">Тайтлы</string>
+    <string name="aurora_in_global_update">В глобальном обновлении</string>
+    <string name="aurora_started">Начато</string>
+    <string name="aurora_local">Локальные</string>
+    <string name="aurora_episodes">Эпизоды</string>
+    <string name="aurora_total">Всего</string>
+    <string name="aurora_watched">Просмотрено</string>
+    <string name="aurora_downloaded">Загружено</string>
+    <string name="aurora_trackers">Трекеры</string>
+    <string name="aurora_tracked_titles">Отслеживаемые</string>
+    <string name="aurora_mean_score">Средняя оценка</string>
+    <string name="aurora_trackers_used">Используемые трекеры</string>
+
+    <!-- Settings Screen -->
+    <string name="aurora_settings">Настройки</string>
+    <string name="aurora_customize_experience">Настройте приложение под себя</string>
+    <string name="aurora_back">Назад</string>
+
+    <!-- Browse Source Categories -->
+    <string name="aurora_source_last_used">Последний использованный</string>
+    <string name="aurora_source_pinned">Закреплённые</string>
+    <string name="aurora_source_all">Все источники</string>
+    <string name="aurora_source_other">Другие</string>
+
+    <!-- More Screen -->
+    <string name="aurora_downloaded_only">Только загруженные</string>
+    <string name="aurora_downloads">Загрузки</string>
+    <string name="aurora_about">О приложении</string>
+    <string name="aurora_help">Помощь</string>
+    <string name="aurora_statistics">Статистика</string>
+    <string name="aurora_more">Ещё</string>
+    <string name="aurora_library">Библиотека</string>
 </resources>

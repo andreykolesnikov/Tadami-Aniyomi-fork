@@ -21,11 +21,7 @@ class UiPreferences(
 
     fun appTheme() = preferenceStore.getEnum(
         "pref_app_theme",
-        if (DeviceUtil.isDynamicColorAvailable) {
-            AppTheme.MONET
-        } else {
-            AppTheme.DEFAULT
-        },
+        AppTheme.AURORA,
     )
 
     fun themeDarkAmoled() = preferenceStore.getBoolean("pref_theme_dark_amoled_key", false)
@@ -36,7 +32,7 @@ class UiPreferences(
 
     fun tabletUiMode() = preferenceStore.getEnum("tablet_ui_mode", TabletUiMode.AUTOMATIC)
 
-    fun startScreen() = preferenceStore.getEnum("start_screen", StartScreen.ANIME)
+    fun startScreen() = preferenceStore.getEnum("start_screen", StartScreen.HOME)
 
     fun navStyle() = preferenceStore.getEnum("bottom_rail_nav_style", NavStyle.MOVE_HISTORY_TO_MORE)
 

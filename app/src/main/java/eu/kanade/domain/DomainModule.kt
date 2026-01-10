@@ -38,6 +38,7 @@ import eu.kanade.domain.source.manga.interactor.GetMangaSourcesWithFavoriteCount
 import eu.kanade.domain.source.manga.interactor.ToggleMangaIncognito
 import eu.kanade.domain.source.manga.interactor.ToggleMangaSource
 import eu.kanade.domain.source.manga.interactor.ToggleMangaSourcePin
+import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.domain.track.anime.interactor.AddAnimeTracks
 import eu.kanade.domain.track.anime.interactor.RefreshAnimeTracks
 import eu.kanade.domain.track.anime.interactor.SyncEpisodeProgressWithTrack
@@ -46,6 +47,8 @@ import eu.kanade.domain.track.manga.interactor.AddMangaTracks
 import eu.kanade.domain.track.manga.interactor.RefreshMangaTracks
 import eu.kanade.domain.track.manga.interactor.SyncChapterProgressWithTrack
 import eu.kanade.domain.track.manga.interactor.TrackChapter
+import eu.kanade.domain.ui.UiPreferences
+import eu.kanade.domain.ui.UserProfilePreferences
 import eu.kanade.tachiyomi.ui.player.utils.TrackSelect
 import mihon.data.repository.anime.AnimeExtensionRepoRepositoryImpl
 import mihon.data.repository.manga.MangaExtensionRepoRepositoryImpl
@@ -404,6 +407,10 @@ class DomainModule : InjektModule {
         addFactory { UpdateCustomButton(get()) }
         addFactory { ReorderCustomButton(get()) }
         addFactory { ToggleFavoriteCustomButton(get()) }
+
+        addFactory { UiPreferences(get()) }
+        addFactory { UserProfilePreferences(get()) }
+        addFactory { SourcePreferences(get()) }
 
         addFactory { TrackSelect(get(), get()) }
     }

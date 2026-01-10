@@ -8,18 +8,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import cafe.adriel.voyager.core.model.rememberScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import eu.kanade.domain.ui.UiPreferences
+import eu.kanade.domain.ui.model.AppTheme
+import eu.kanade.presentation.browse.BrowseScreenAurora
 import eu.kanade.presentation.components.TabbedScreen
 import eu.kanade.presentation.util.Tab
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.ui.browse.anime.extension.AnimeExtensionsScreenModel
 import eu.kanade.tachiyomi.ui.browse.anime.extension.animeExtensionsTab
 import eu.kanade.tachiyomi.ui.browse.anime.migration.sources.migrateAnimeSourceTab
+import eu.kanade.tachiyomi.ui.browse.anime.source.AnimeSourcesScreenModel
 import eu.kanade.tachiyomi.ui.browse.anime.source.animeSourcesTab
+import eu.kanade.tachiyomi.ui.browse.anime.source.browse.BrowseAnimeSourceScreen
 import eu.kanade.tachiyomi.ui.browse.anime.source.globalsearch.GlobalAnimeSearchScreen
 import eu.kanade.tachiyomi.ui.browse.manga.extension.MangaExtensionsScreenModel
 import eu.kanade.tachiyomi.ui.browse.manga.extension.mangaExtensionsTab
@@ -33,6 +43,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.i18n.stringResource
+import tachiyomi.presentation.core.util.collectAsState as preferenceCollectAsState
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
 
 data object BrowseTab : Tab {
 
@@ -66,42 +79,106 @@ data object BrowseTab : Tab {
     @Composable
     override fun Content() {
         val context = LocalContext.current
+        val navigator = LocalNavigator.currentOrThrow
+        
+        val uiPreferences = Injekt.get<UiPreferences>()
+        val theme by uiPreferences.appTheme().preferenceCollectAsState()
 
-        // Hoisted for extensions tab's search bar
-        val mangaExtensionsScreenModel = rememberScreenModel { MangaExtensionsScreenModel() }
-        val mangaExtensionsState by mangaExtensionsScreenModel.state.collectAsState()
+        if (theme == AppTheme.AURORA) {
+            val animeSourcesScreenModel = rememberScreenModel { AnimeSourcesScreenModel() }
+            val animeSourcesState by animeSourcesScreenModel.state.collectAsState()
+            
+            val animeExtensionsScreenModel = rememberScreenModel { AnimeExtensionsScreenModel() }
+            val tabs = persistentListOf(
+                animeSourcesTab(),
+                mangaSourcesTab(),
+                animeExtensionsTab(animeExtensionsScreenModel),
+                mangaExtensionsTab(rememberScreenModel { MangaExtensionsScreenModel() }),
+                migrateAnimeSourceTab(),
+                migrateMangaSourceTab(),
+            )
+            
+            var selectedTabIndex by remember { mutableIntStateOf(-1) }
+            val pagerState = rememberPagerState(initialPage = if (selectedTabIndex >= 0) selectedTabIndex else 0) { tabs.size }
+            
+            LaunchedEffect(Unit) {
+                switchToTabNumberChannel.receiveAsFlow()
+                    .collectLatest { tabIndex ->
+                        selectedTabIndex = tabIndex
+                    }
+            }
+            
+            LaunchedEffect(selectedTabIndex) {
+                if (selectedTabIndex >= 0) {
+                    pagerState.scrollToPage(selectedTabIndex)
+                }
+            }
+            
+            if (selectedTabIndex < 0) {
+                BrowseScreenAurora(
+                    animeSources = animeSourcesState.items,
+                    onAnimeSourceClick = { source ->
+                        navigator.push(BrowseAnimeSourceScreen(source.id, null))
+                    },
+                    onAnimeSourceLongClick = { source ->
+                        animeSourcesScreenModel.togglePin(source)
+                    },
+                    onGlobalSearchClick = { navigator.push(GlobalAnimeSearchScreen()) },
+                    onExtensionsClick = { selectedTabIndex = 2 },
+                    onMigrateClick = { selectedTabIndex = 4 }
+                )
+            } else {
+                TabbedScreen(
+                    titleRes = MR.strings.browse,
+                    tabs = tabs,
+                    state = pagerState,
+                    mangaSearchQuery = null,
+                    onChangeMangaSearchQuery = {},
+                    animeSearchQuery = animeExtensionsScreenModel.state.collectAsState().value.searchQuery,
+                    onChangeAnimeSearchQuery = animeExtensionsScreenModel::search,
+                    scrollable = true,
+                )
+            }
+            
+            LaunchedEffect(Unit) {
+                (context as? MainActivity)?.ready = true
+            }
+        } else {
+            val mangaExtensionsScreenModel = rememberScreenModel { MangaExtensionsScreenModel() }
+            val mangaExtensionsState by mangaExtensionsScreenModel.state.collectAsState()
 
-        val animeExtensionsScreenModel = rememberScreenModel { AnimeExtensionsScreenModel() }
-        val animeExtensionsState by animeExtensionsScreenModel.state.collectAsState()
+            val animeExtensionsScreenModel = rememberScreenModel { AnimeExtensionsScreenModel() }
+            val animeExtensionsState by animeExtensionsScreenModel.state.collectAsState()
 
-        val tabs = persistentListOf(
-            animeSourcesTab(),
-            mangaSourcesTab(),
-            animeExtensionsTab(animeExtensionsScreenModel),
-            mangaExtensionsTab(mangaExtensionsScreenModel),
-            migrateAnimeSourceTab(),
-            migrateMangaSourceTab(),
-        )
+            val tabs = persistentListOf(
+                animeSourcesTab(),
+                mangaSourcesTab(),
+                animeExtensionsTab(animeExtensionsScreenModel),
+                mangaExtensionsTab(mangaExtensionsScreenModel),
+                migrateAnimeSourceTab(),
+                migrateMangaSourceTab(),
+            )
 
-        val state = rememberPagerState { tabs.size }
+            val state = rememberPagerState { tabs.size }
 
-        TabbedScreen(
-            titleRes = MR.strings.browse,
-            tabs = tabs,
-            state = state,
-            mangaSearchQuery = mangaExtensionsState.searchQuery,
-            onChangeMangaSearchQuery = mangaExtensionsScreenModel::search,
-            animeSearchQuery = animeExtensionsState.searchQuery,
-            onChangeAnimeSearchQuery = animeExtensionsScreenModel::search,
-            scrollable = true,
-        )
-        LaunchedEffect(Unit) {
-            switchToTabNumberChannel.receiveAsFlow()
-                .collectLatest { state.scrollToPage(it) }
-        }
+            TabbedScreen(
+                titleRes = MR.strings.browse,
+                tabs = tabs,
+                state = state,
+                mangaSearchQuery = mangaExtensionsState.searchQuery,
+                onChangeMangaSearchQuery = mangaExtensionsScreenModel::search,
+                animeSearchQuery = animeExtensionsState.searchQuery,
+                onChangeAnimeSearchQuery = animeExtensionsScreenModel::search,
+                scrollable = true,
+            )
+            LaunchedEffect(Unit) {
+                switchToTabNumberChannel.receiveAsFlow()
+                    .collectLatest { state.scrollToPage(it) }
+            }
 
-        LaunchedEffect(Unit) {
-            (context as? MainActivity)?.ready = true
+            LaunchedEffect(Unit) {
+                (context as? MainActivity)?.ready = true
+            }
         }
     }
 }

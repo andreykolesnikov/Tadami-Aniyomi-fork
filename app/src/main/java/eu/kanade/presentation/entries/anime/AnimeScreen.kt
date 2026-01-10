@@ -102,6 +102,9 @@ import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.util.shouldExpandFAB
 import tachiyomi.source.local.entries.anime.isLocal
+import tachiyomi.presentation.core.util.collectAsState
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
@@ -164,7 +167,58 @@ fun AnimeScreen(
     // Dubbing selection
     onDubbingClicked: (() -> Unit)? = null,
     selectedDubbing: String? = null,
+    onDownloadLongClick: ((Episode) -> Unit)? = null,
 ) {
+    val uiPreferences = Injekt.get<eu.kanade.domain.ui.UiPreferences>()
+    val theme by uiPreferences.appTheme().collectAsState()
+
+    if (theme == eu.kanade.domain.ui.model.AppTheme.AURORA) {
+        AnimeScreenAuroraImpl(
+            state = state,
+            snackbarHostState = snackbarHostState,
+            nextUpdate = nextUpdate,
+            isTabletUi = isTabletUi,
+            episodeSwipeStartAction = episodeSwipeStartAction,
+            episodeSwipeEndAction = episodeSwipeEndAction,
+            showNextEpisodeAirTime = showNextEpisodeAirTime,
+            alwaysUseExternalPlayer = alwaysUseExternalPlayer,
+            navigateUp = navigateUp,
+            onEpisodeClicked = onEpisodeClicked,
+            onDownloadEpisode = onDownloadEpisode,
+            onAddToLibraryClicked = onAddToLibraryClicked,
+            onWebViewClicked = onWebViewClicked,
+            onWebViewLongClicked = onWebViewLongClicked,
+            onTrackingClicked = onTrackingClicked,
+            onTagSearch = onTagSearch,
+            onFilterButtonClicked = onFilterButtonClicked,
+            onRefresh = onRefresh,
+            onContinueWatching = onContinueWatching,
+            onSearch = onSearch,
+            onCoverClicked = onCoverClicked,
+            onShareClicked = onShareClicked,
+            onDownloadActionClicked = onDownloadActionClicked,
+            onEditCategoryClicked = onEditCategoryClicked,
+            onEditFetchIntervalClicked = onEditFetchIntervalClicked,
+            onMigrateClicked = onMigrateClicked,
+            changeAnimeSkipIntro = changeAnimeSkipIntro,
+            onMultiBookmarkClicked = onMultiBookmarkClicked,
+            onMultiFillermarkClicked = onMultiFillermarkClicked,
+            onMultiMarkAsSeenClicked = onMultiMarkAsSeenClicked,
+            onMarkPreviousAsSeenClicked = onMarkPreviousAsSeenClicked,
+            onMultiDeleteClicked = onMultiDeleteClicked,
+            onEpisodeSwipe = onEpisodeSwipe,
+            onEpisodeSelected = onEpisodeSelected,
+            onAllEpisodeSelected = onAllEpisodeSelected,
+            onInvertSelection = onInvertSelection,
+            onSeasonClicked = onSeasonClicked,
+            onContinueWatchingClicked = onContinueWatchingClicked,
+            onDubbingClicked = onDubbingClicked,
+            selectedDubbing = selectedDubbing,
+            onDownloadLongClick = onDownloadLongClick,
+        )
+        return
+    }
+
     val context = LocalContext.current
     val onCopyTagToClipboard: (tag: String) -> Unit = {
         if (it.isNotEmpty()) {

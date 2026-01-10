@@ -88,7 +88,7 @@
     <string name="label_download_queue">Очередь загрузки</string>
     <string name="label_library">Библиотека</string>
     <string name="label_recent_manga">История</string>
-    <string name="label_recent_updates">Обновления</string>
+    <string name="label_recent_updates">Новое</string>
     <string name="label_settings">Настройки</string>
     <string name="landscape">Альбомная</string>
     <string name="last_read_chapter">Последняя прочитанная глава</string>
@@ -227,7 +227,7 @@
     <string name="other_source">Другое</string>
     <string name="action_global_search_hint">Искать глобально…</string>
     <string name="latest">Последние</string>
-    <string name="browse">Поисковик</string>
+    <string name="browse">Обзор</string>
     <string name="channel_common">Общий</string>
     <string name="information_empty_category">Нет категорий в библиотеке. Нажмите кнопку «Добавить» чтобы создать категорию для организации вашей библиотеки.</string>
     <string name="label_migration">Перенос</string>

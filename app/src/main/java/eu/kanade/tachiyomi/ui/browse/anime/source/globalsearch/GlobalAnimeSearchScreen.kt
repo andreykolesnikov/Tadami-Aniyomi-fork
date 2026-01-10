@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -16,8 +17,11 @@ import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.ui.browse.anime.source.browse.BrowseAnimeSourceScreen
 import eu.kanade.tachiyomi.ui.entries.anime.AnimeScreen
 import tachiyomi.presentation.core.screens.LoadingScreen
+import tachiyomi.presentation.core.util.collectAsState
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
 
-class GlobalAnimeSearchScreen(
+data class GlobalAnimeSearchScreen(
     val searchQuery: String = "",
     private val extensionFilter: String? = null,
 ) : Screen() {
@@ -38,6 +42,10 @@ class GlobalAnimeSearchScreen(
             )
         }
         val state by screenModel.state.collectAsState()
+        
+        val uiPreferences = Injekt.get<eu.kanade.domain.ui.UiPreferences>()
+        val theme by uiPreferences.appTheme().collectAsState()
+
         var showSingleLoadingScreen by remember {
             mutableStateOf(
                 searchQuery.isNotEmpty() && !extensionFilter.isNullOrEmpty() && state.total == 1,
@@ -63,20 +71,28 @@ class GlobalAnimeSearchScreen(
                 }
             }
         } else {
-            GlobalAnimeSearchScreen(
-                state = state,
-                navigateUp = navigator::pop,
-                onChangeSearchQuery = screenModel::updateSearchQuery,
-                onSearch = { screenModel.search() },
-                getAnime = { screenModel.getAnime(it) },
-                onChangeSearchFilter = screenModel::setSourceFilter,
-                onToggleResults = screenModel::toggleFilterResults,
-                onClickSource = {
-                    navigator.push(BrowseAnimeSourceScreen(it.id, state.searchQuery))
-                },
-                onClickItem = { navigator.push(AnimeScreen(it.id, true)) },
-                onLongClickItem = { navigator.push(AnimeScreen(it.id, true)) },
-            )
+            if (theme == eu.kanade.domain.ui.model.AppTheme.AURORA) {
+                eu.kanade.presentation.browse.anime.GlobalAnimeSearchAuroraContent(
+                    items = state.items.values.filterIsInstance<AnimeSearchItemResult.Success>().map { it.result },
+                    onAnimeClicked = { navigator.push(AnimeScreen(it, true)) },
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(top = 16.dp, bottom = 16.dp)
+                )
+            } else {
+                GlobalAnimeSearchScreen(
+                    state = state,
+                    navigateUp = navigator::pop,
+                    onChangeSearchQuery = screenModel::updateSearchQuery,
+                    onSearch = { screenModel.search() },
+                    getAnime = { screenModel.getAnime(it) },
+                    onChangeSearchFilter = screenModel::setSourceFilter,
+                    onToggleResults = screenModel::toggleFilterResults,
+                    onClickSource = {
+                        navigator.push(BrowseAnimeSourceScreen(it.id, state.searchQuery ?: ""))
+                    },
+                    onClickItem = { navigator.push(AnimeScreen(it.id, true)) },
+                    onLongClickItem = { navigator.push(AnimeScreen(it.id, true)) },
+                )
+            }
         }
     }
 }

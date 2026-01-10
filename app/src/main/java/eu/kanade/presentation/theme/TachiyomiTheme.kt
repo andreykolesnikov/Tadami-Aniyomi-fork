@@ -14,6 +14,7 @@ import eu.kanade.domain.ui.model.AppTheme
 import eu.kanade.presentation.theme.colorscheme.BaseColorScheme
 import eu.kanade.presentation.theme.colorscheme.CloudflareColorScheme
 import eu.kanade.presentation.theme.colorscheme.CottoncandyColorScheme
+import eu.kanade.presentation.theme.colorscheme.AuroraColorScheme
 import eu.kanade.presentation.theme.colorscheme.DoomColorScheme
 import eu.kanade.presentation.theme.colorscheme.GreenAppleColorScheme
 import eu.kanade.presentation.theme.colorscheme.LavenderColorScheme
@@ -102,7 +103,8 @@ val playerRippleConfiguration
     )
 
 private val colorSchemes: Map<AppTheme, BaseColorScheme> = mapOf(
-    AppTheme.DEFAULT to TachiyomiColorScheme,
+    AppTheme.DEFAULT to AuroraColorScheme,
+    AppTheme.AURORA to AuroraColorScheme,
     AppTheme.CLOUDFLARE to CloudflareColorScheme,
     AppTheme.COTTONCANDY to CottoncandyColorScheme,
     AppTheme.DOOM to DoomColorScheme,
@@ -120,4 +122,5 @@ private val colorSchemes: Map<AppTheme, BaseColorScheme> = mapOf(
     AppTheme.TIDAL_WAVE to TidalWaveColorScheme,
     AppTheme.YINYANG to YinYangColorScheme,
     AppTheme.YOTSUBA to YotsubaColorScheme,
+    AppTheme.AURORA to AuroraColorScheme,
 )

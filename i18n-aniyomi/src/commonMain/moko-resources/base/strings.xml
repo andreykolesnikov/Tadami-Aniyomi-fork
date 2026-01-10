@@ -587,4 +587,78 @@
     <string name="pref_download_fillermarked_items">Allow downloading of fillermarked episodes</string>
     <string name="show_episode_previews">Episode thumbnails</string>
     <string name="show_episode_summaries">Episode summaries</string>
+
+    <!-- Aurora Theme Strings -->
+    <!-- Home Screen -->
+    <string name="aurora_welcome_back">Welcome back</string>
+    <string name="aurora_home">Home</string>
+    <string name="aurora_continue_watching">Continue Watching</string>
+    <string name="aurora_continue_watching_header">CONTINUE WATCHING</string>
+    <string name="aurora_play">Play</string>
+    <string name="aurora_details">Details</string>
+    <string name="aurora_view_all">View All</string>
+    <string name="aurora_episode_number">Episode %s</string>
+    <string name="aurora_recently_added">Recently Added</string>
+    <string name="aurora_more">More</string>
+    <string name="aurora_change_nickname">Change Nickname</string>
+    <string name="aurora_nothing_to_continue">Nothing to continue watching</string>
+    <string name="aurora_add_anime_to_library">Add some anime to your library to see them here</string>
+
+    <!-- Browse Screen -->
+    <string name="aurora_browse">Browse</string>
+    <string name="aurora_discover_sources">Discover anime sources</string>
+    <string name="aurora_global_search">Global Search</string>
+    <string name="aurora_extensions">Extensions</string>
+    <string name="aurora_migrate">Migrate</string>
+    <string name="aurora_pinned_sources">Pinned Sources</string>
+    <string name="aurora_pinned_badge">PINNED</string>
+    <string name="aurora_sources">Sources</string>
+
+    <!-- Updates Screen -->
+    <string name="aurora_updates">Updates</string>
+    <string name="aurora_new_episodes_subtitle">New episodes from your library</string>
+    <string name="aurora_no_new_episodes">No New Episodes</string>
+    <string name="aurora_library_up_to_date">Your library is up to date!\nTap refresh to check for new episodes.</string>
+    <string name="aurora_update_library">Update Library</string>
+    <string name="aurora_refresh_library">Refresh Library</string>
+    <string name="aurora_updating_library">Updating library...</string>
+    <string name="aurora_update_already_running">Update already running</string>
+
+    <!-- Statistics Screen -->
+    <string name="aurora_anime_statistics">Anime Statistics</string>
+    <string name="aurora_in_library">In Library</string>
+    <string name="aurora_watch_time">Watch Time</string>
+    <string name="aurora_completed">Completed</string>
+    <string name="aurora_titles">Titles</string>
+    <string name="aurora_in_global_update">In Global Update</string>
+    <string name="aurora_started">Started</string>
+    <string name="aurora_local">Local</string>
+    <string name="aurora_episodes">Episodes</string>
+    <string name="aurora_total">Total</string>
+    <string name="aurora_watched">Watched</string>
+    <string name="aurora_downloaded">Downloaded</string>
+    <string name="aurora_trackers">Trackers</string>
+    <string name="aurora_tracked_titles">Tracked Titles</string>
+    <string name="aurora_mean_score">Mean Score</string>
+    <string name="aurora_trackers_used">Trackers Used</string>
+
+    <!-- Settings Screen -->
+    <string name="aurora_settings">Settings</string>
+    <string name="aurora_customize_experience">Customize your experience</string>
+    <string name="aurora_back">Back</string>
+
+    <!-- Browse Source Categories -->
+    <string name="aurora_source_last_used">Last Used</string>
+    <string name="aurora_source_pinned">Pinned</string>
+    <string name="aurora_source_all">All Sources</string>
+    <string name="aurora_source_other">Other</string>
+
+    <!-- More Screen -->
+    <string name="aurora_downloaded_only">Downloaded Only</string>
+    <string name="aurora_downloads">Downloads</string>
+    <string name="aurora_about">About</string>
+    <string name="aurora_help">Help</string>
+    <string name="aurora_statistics">Statistics</string>
+    <string name="aurora_more">More</string>
+    <string name="aurora_library">Library</string>
 </resources>

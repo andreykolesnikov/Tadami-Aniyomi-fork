@@ -27,6 +27,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +40,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.StringResource
+import eu.kanade.domain.ui.UiPreferences
+import eu.kanade.domain.ui.model.AppTheme
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.AppBarActions
 import eu.kanade.presentation.more.settings.screen.about.AboutScreen
@@ -51,6 +54,9 @@ import tachiyomi.i18n.MR
 import tachiyomi.i18n.aniyomi.AYMR
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.stringResource
+import tachiyomi.presentation.core.util.collectAsState
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
 import cafe.adriel.voyager.core.screen.Screen as VoyagerScreen
 
 object SettingsMainScreen : Screen() {
@@ -79,6 +85,17 @@ object SettingsMainScreen : Screen() {
     fun Content(twoPane: Boolean) {
         val navigator = LocalNavigator.currentOrThrow
         val backPress = LocalBackPress.currentOrThrow
+        val uiPreferences = Injekt.get<UiPreferences>()
+        val theme by uiPreferences.appTheme().collectAsState()
+        
+        if (theme == AppTheme.AURORA && !twoPane) {
+            SettingsAuroraContent(
+                navigator = navigator,
+                onBackClick = backPress::invoke
+            )
+            return
+        }
+        
         val containerColor = if (twoPane) getPalerSurface() else MaterialTheme.colorScheme.surface
         val topBarState = rememberTopAppBarState()
 
