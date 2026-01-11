@@ -42,8 +42,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import eu.kanade.presentation.theme.AuroraTheme
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,19 +70,12 @@ fun TabbedScreenAurora(
     var isSearchActive by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
 
-    val backgroundBrush = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF1e1b4b),
-            Color(0xFF101b22)
-        )
-    )
-
-    val accentBlue = Color(0xFF279df1)
+    val colors = AuroraTheme.colors
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(backgroundBrush)
+            .background(colors.backgroundGradient)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(modifier = Modifier.statusBarsPadding())
@@ -107,8 +100,7 @@ fun TabbedScreenAurora(
                     }
                 },
                 tabs = tabs,
-                currentPage = state.currentPage,
-                accentBlue = accentBlue
+                currentPage = state.currentPage
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -118,8 +110,7 @@ fun TabbedScreenAurora(
                 selectedIndex = state.currentPage,
                 onTabSelected = { index ->
                     scope.launch { state.animateScrollToPage(index) }
-                },
-                accentBlue = accentBlue
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -152,9 +143,10 @@ private fun AuroraTabHeader(
     onSearchClose: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
     tabs: ImmutableList<TabContent>,
-    currentPage: Int,
-    accentBlue: Color
+    currentPage: Int
 ) {
+    val colors = AuroraTheme.colors
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -172,15 +164,15 @@ private fun AuroraTabHeader(
                 placeholder = {
                     Text(
                         text = stringResource(MR.strings.action_search),
-                        color = Color.White.copy(alpha = 0.5f)
+                        color = colors.textSecondary
                     )
                 },
                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.White.copy(alpha = 0.1f),
-                    unfocusedContainerColor = Color.White.copy(alpha = 0.1f),
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    cursorColor = accentBlue,
+                    focusedContainerColor = colors.glass,
+                    unfocusedContainerColor = colors.glass,
+                    focusedTextColor = colors.textPrimary,
+                    unfocusedTextColor = colors.textPrimary,
+                    cursorColor = colors.accent,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
                 ),
@@ -190,7 +182,7 @@ private fun AuroraTabHeader(
                     Icon(
                         imageVector = Icons.Filled.Search,
                         contentDescription = null,
-                        tint = Color.White.copy(alpha = 0.7f)
+                        tint = colors.textSecondary
                     )
                 },
                 trailingIcon = {
@@ -198,7 +190,7 @@ private fun AuroraTabHeader(
                         Icon(
                             imageVector = Icons.Filled.Close,
                             contentDescription = null,
-                            tint = Color.White.copy(alpha = 0.7f)
+                            tint = colors.textSecondary
                         )
                     }
                 }
@@ -208,7 +200,7 @@ private fun AuroraTabHeader(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.headlineMedium,
-                    color = Color.White,
+                    color = colors.textPrimary,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -218,13 +210,13 @@ private fun AuroraTabHeader(
                     IconButton(
                         onClick = onSearchClick,
                         modifier = Modifier
-                            .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                            .background(colors.glass, CircleShape)
                             .size(44.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Search,
                             contentDescription = stringResource(MR.strings.action_search),
-                            tint = Color.White
+                            tint = colors.textPrimary
                         )
                     }
                 }
@@ -234,13 +226,13 @@ private fun AuroraTabHeader(
                         IconButton(
                             onClick = appBarAction.onClick,
                             modifier = Modifier
-                                .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                                .background(colors.glass, CircleShape)
                                 .size(44.dp)
                         ) {
                             Icon(
                                 imageVector = appBarAction.icon,
                                 contentDescription = appBarAction.title,
-                                tint = Color.White
+                                tint = colors.textPrimary
                             )
                         }
                     }
@@ -254,8 +246,7 @@ private fun AuroraTabHeader(
 private fun AuroraTabRow(
     tabs: ImmutableList<TabContent>,
     selectedIndex: Int,
-    onTabSelected: (Int) -> Unit,
-    accentBlue: Color
+    onTabSelected: (Int) -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -272,8 +263,7 @@ private fun AuroraTabRow(
                 text = stringResource(tab.titleRes),
                 isSelected = isSelected,
                 badgeCount = tab.badgeNumber,
-                onClick = { onTabSelected(index) },
-                accentBlue = accentBlue
+                onClick = { onTabSelected(index) }
             )
         }
     }
@@ -284,19 +274,20 @@ private fun AuroraTabChip(
     text: String,
     isSelected: Boolean,
     badgeCount: Int?,
-    onClick: () -> Unit,
-    accentBlue: Color
+    onClick: () -> Unit
 ) {
+    val colors = AuroraTheme.colors
+    
     val backgroundColor = if (isSelected) {
-        accentBlue
+        colors.accent
     } else {
-        Color.White.copy(alpha = 0.08f)
+        colors.glass
     }
 
     val textColor = if (isSelected) {
-        Color.White
+        colors.textOnAccent
     } else {
-        Color.White.copy(alpha = 0.7f)
+        colors.textSecondary
     }
 
     Row(
@@ -321,14 +312,14 @@ private fun AuroraTabChip(
                 modifier = Modifier
                     .size(20.dp)
                     .background(
-                        if (isSelected) Color.White.copy(alpha = 0.3f) else accentBlue,
+                        if (isSelected) colors.textOnAccent.copy(alpha = 0.3f) else colors.accent,
                         CircleShape
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = if (badgeCount > 99) "99+" else badgeCount.toString(),
-                    color = Color.White,
+                    color = colors.textOnAccent,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold
                 )

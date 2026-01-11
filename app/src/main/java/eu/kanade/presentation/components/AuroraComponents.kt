@@ -9,22 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import eu.kanade.presentation.theme.AuroraTheme
 
 @Composable
 fun AuroraBackground(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    val backgroundBrush = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF1e1b4b),
-            Color(0xFF101b22)
-        )
-    )
+    val colors = AuroraTheme.colors
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(backgroundBrush)
+            .background(colors.backgroundGradient)
     ) {
         content()
     }
