@@ -36,9 +36,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import eu.kanade.presentation.theme.AuroraTheme
 import androidx.compose.ui.platform.LocalContext
 import tachiyomi.presentation.core.i18n.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,7 +45,6 @@ import tachiyomi.i18n.aniyomi.AYMR
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import eu.kanade.presentation.more.stats.data.StatsData
 import eu.kanade.presentation.util.toDurationString
 import java.util.Locale
 import kotlin.time.DurationUnit
@@ -57,12 +55,7 @@ fun AnimeStatsAuroraContent(
     state: StatsScreenState.SuccessAnime,
     paddingValues: PaddingValues
 ) {
-    val backgroundBrush = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF1e1b4b),
-            Color(0xFF101b22)
-        )
-    )
+    val colors = AuroraTheme.colors
 
     val context = LocalContext.current
     val none = "N/A"
@@ -75,7 +68,7 @@ fun AnimeStatsAuroraContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundBrush)
+            .background(colors.backgroundGradient)
     ) {
         LazyColumn(
             contentPadding = paddingValues,
@@ -89,7 +82,7 @@ fun AnimeStatsAuroraContent(
                 Text(
                     text = stringResource(AYMR.strings.aurora_anime_statistics),
                     style = MaterialTheme.typography.headlineMedium,
-                    color = Color.White,
+                    color = colors.textPrimary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)
                 )
@@ -189,13 +182,15 @@ private fun OverviewCard(
     label: String,
     modifier: Modifier = Modifier
 ) {
+    val colors = AuroraTheme.colors
+    
     Card(
         modifier = modifier.height(120.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF279df1).copy(alpha = 0.15f)
+            containerColor = colors.accent.copy(alpha = 0.15f)
         ),
-        border = BorderStroke(1.dp, Color(0xFF279df1).copy(alpha = 0.3f))
+        border = BorderStroke(1.dp, colors.accent.copy(alpha = 0.3f))
     ) {
         Column(
             modifier = Modifier
@@ -207,20 +202,20 @@ private fun OverviewCard(
             Box(
                 modifier = Modifier
                     .size(36.dp)
-                    .background(Color(0xFF279df1).copy(alpha = 0.2f), CircleShape),
+                    .background(colors.accent.copy(alpha = 0.2f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = Color(0xFF279df1),
+                    tint = colors.accent,
                     modifier = Modifier.size(20.dp)
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = value,
-                color = Color.White,
+                color = colors.textPrimary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center,
@@ -229,7 +224,7 @@ private fun OverviewCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = label,
-                color = Color.White.copy(alpha = 0.6f),
+                color = colors.textSecondary,
                 fontSize = 11.sp,
                 textAlign = TextAlign.Center
             )
@@ -248,13 +243,15 @@ private fun StatsSectionCard(
     title: String,
     items: List<StatItem>
 ) {
+    val colors = AuroraTheme.colors
+    
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.08f)
+            containerColor = colors.glass
         ),
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f))
+        border = BorderStroke(1.dp, colors.divider)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -264,12 +261,12 @@ private fun StatsSectionCard(
                     modifier = Modifier
                         .width(4.dp)
                         .height(20.dp)
-                        .background(Color(0xFF279df1), RoundedCornerShape(2.dp))
+                        .background(colors.accent, RoundedCornerShape(2.dp))
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = title,
-                    color = Color.White,
+                    color = colors.textPrimary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
@@ -289,13 +286,13 @@ private fun StatsSectionCard(
                         Icon(
                             imageVector = item.icon,
                             contentDescription = null,
-                            tint = Color(0xFF279df1).copy(alpha = 0.8f),
+                            tint = colors.accent.copy(alpha = 0.8f),
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = item.value,
-                            color = Color.White,
+                            color = colors.textPrimary,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
                             textAlign = TextAlign.Center
@@ -303,7 +300,7 @@ private fun StatsSectionCard(
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = item.label,
-                            color = Color.White.copy(alpha = 0.5f),
+                            color = colors.textSecondary,
                             fontSize = 11.sp,
                             textAlign = TextAlign.Center
                         )

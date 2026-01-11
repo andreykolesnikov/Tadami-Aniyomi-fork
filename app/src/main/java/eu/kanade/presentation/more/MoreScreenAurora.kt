@@ -30,13 +30,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import eu.kanade.presentation.theme.AuroraTheme
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import eu.kanade.presentation.more.settings.widget.SwitchPreferenceWidget
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.i18n.aniyomi.AYMR
 
@@ -52,17 +50,12 @@ fun MoreScreenAurora(
     onStatsClick: () -> Unit,
     onHelpClick: () -> Unit
 ) {
-    val backgroundBrush = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF1e1b4b),
-            Color(0xFF101b22)
-        )
-    )
+    val colors = AuroraTheme.colors
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundBrush)
+            .background(colors.backgroundGradient)
     ) {
         LazyColumn(
             modifier = Modifier
@@ -74,7 +67,7 @@ fun MoreScreenAurora(
                 Text(
                     text = stringResource(AYMR.strings.aurora_more),
                     style = MaterialTheme.typography.headlineMedium,
-                    color = Color.White,
+                    color = colors.textPrimary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 24.dp)
                 )
@@ -135,12 +128,14 @@ fun AuroraSettingItem(
     icon: ImageVector,
     onClick: () -> Unit
 ) {
+    val colors = AuroraTheme.colors
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.White.copy(alpha = 0.05f))
+            .background(colors.glass)
             .clickable(onClick = onClick)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -148,13 +143,13 @@ fun AuroraSettingItem(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = Color(0xFF279df1),
+            tint = colors.accent,
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = title,
-            color = Color.White,
+            color = colors.textPrimary,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold
         )
@@ -168,12 +163,14 @@ fun AuroraToggleItem(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
+    val colors = AuroraTheme.colors
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.White.copy(alpha = 0.05f))
+            .background(colors.glass)
             .clickable { onCheckedChange(!checked) }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -183,13 +180,13 @@ fun AuroraToggleItem(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color(0xFF279df1),
+                tint = colors.accent,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = title,
-                color = Color.White,
+                color = colors.textPrimary,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -199,8 +196,8 @@ fun AuroraToggleItem(
             checked = checked,
             onCheckedChange = onCheckedChange,
             colors = androidx.compose.material3.SwitchDefaults.colors(
-                checkedThumbColor = Color(0xFF279df1),
-                checkedTrackColor = Color(0xFF279df1).copy(alpha = 0.5f)
+                checkedThumbColor = colors.accent,
+                checkedTrackColor = colors.accent.copy(alpha = 0.5f)
             )
         )
     }

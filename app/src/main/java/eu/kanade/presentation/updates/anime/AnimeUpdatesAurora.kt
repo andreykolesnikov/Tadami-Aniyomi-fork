@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import eu.kanade.presentation.theme.AuroraTheme
 import androidx.compose.ui.layout.ContentScale
 import tachiyomi.presentation.core.i18n.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,17 +56,12 @@ fun AnimeUpdatesAuroraContent(
     onRefresh: () -> Unit,
     contentPadding: PaddingValues
 ) {
-    val backgroundBrush = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF1e1b4b),
-            Color(0xFF101b22)
-        )
-    )
+    val colors = AuroraTheme.colors
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundBrush)
+            .background(colors.backgroundGradient)
     ) {
         LazyColumn(
             contentPadding = contentPadding,
@@ -100,6 +96,8 @@ fun AnimeUpdatesAuroraContent(
 
 @Composable
 private fun UpdatesHeader(onRefresh: () -> Unit) {
+    val colors = AuroraTheme.colors
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -111,26 +109,26 @@ private fun UpdatesHeader(onRefresh: () -> Unit) {
             Text(
                 text = stringResource(AYMR.strings.aurora_updates),
                 style = MaterialTheme.typography.headlineMedium,
-                color = Color.White,
+                color = colors.textPrimary,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = stringResource(AYMR.strings.aurora_new_episodes_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.6f)
+                color = colors.textSecondary
             )
         }
 
         IconButton(
             onClick = onRefresh,
             modifier = Modifier
-                .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                .background(colors.glass, CircleShape)
                 .size(48.dp)
         ) {
             Icon(
                 imageVector = Icons.Filled.Refresh,
                 contentDescription = stringResource(AYMR.strings.aurora_refresh_library),
-                tint = Color.White
+                tint = colors.textPrimary
             )
         }
     }
@@ -138,6 +136,8 @@ private fun UpdatesHeader(onRefresh: () -> Unit) {
 
 @Composable
 private fun EmptyUpdatesState(onRefresh: () -> Unit) {
+    val colors = AuroraTheme.colors
+    
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -152,8 +152,8 @@ private fun EmptyUpdatesState(onRefresh: () -> Unit) {
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            Color(0xFF279df1).copy(alpha = 0.3f),
-                            Color(0xFF279df1).copy(alpha = 0.1f),
+                            colors.accent.copy(alpha = 0.3f),
+                            colors.accent.copy(alpha = 0.1f),
                             Color.Transparent
                         )
                     ),
@@ -164,13 +164,13 @@ private fun EmptyUpdatesState(onRefresh: () -> Unit) {
             Box(
                 modifier = Modifier
                     .size(80.dp)
-                    .background(Color(0xFF279df1).copy(alpha = 0.2f), CircleShape),
+                    .background(colors.accent.copy(alpha = 0.2f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Notifications,
                     contentDescription = null,
-                    tint = Color(0xFF279df1),
+                    tint = colors.accent,
                     modifier = Modifier.size(40.dp)
                 )
             }
@@ -180,7 +180,7 @@ private fun EmptyUpdatesState(onRefresh: () -> Unit) {
 
         Text(
             text = stringResource(AYMR.strings.aurora_no_new_episodes),
-            color = Color.White,
+            color = colors.textPrimary,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -190,7 +190,7 @@ private fun EmptyUpdatesState(onRefresh: () -> Unit) {
 
         Text(
             text = stringResource(AYMR.strings.aurora_library_up_to_date),
-            color = Color.White.copy(alpha = 0.6f),
+            color = colors.textSecondary,
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
             lineHeight = 22.sp
@@ -204,9 +204,9 @@ private fun EmptyUpdatesState(onRefresh: () -> Unit) {
                 .clickable(onClick = onRefresh),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF279df1).copy(alpha = 0.15f)
+                containerColor = colors.accent.copy(alpha = 0.15f)
             ),
-            border = BorderStroke(1.dp, Color(0xFF279df1).copy(alpha = 0.3f))
+            border = BorderStroke(1.dp, colors.accent.copy(alpha = 0.3f))
         ) {
             Row(
                 modifier = Modifier
@@ -218,13 +218,13 @@ private fun EmptyUpdatesState(onRefresh: () -> Unit) {
                 Icon(
                     imageVector = Icons.Filled.Refresh,
                     contentDescription = null,
-                    tint = Color(0xFF279df1),
+                    tint = colors.accent,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = stringResource(AYMR.strings.aurora_update_library),
-                    color = Color(0xFF279df1),
+                    color = colors.accent,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
@@ -239,15 +239,17 @@ fun AuroraUpdateCard(
     onClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = AuroraTheme.colors
+    
     Card(
         modifier = modifier
             .fillMaxWidth()
             .clickable { onClick(item.update.animeId) },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.08f)
+            containerColor = colors.glass
         ),
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f))
+        border = BorderStroke(1.dp, colors.divider)
     ) {
         Row(
             modifier = Modifier
@@ -287,7 +289,7 @@ fun AuroraUpdateCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = item.update.animeTitle,
-                    color = Color.White,
+                    color = colors.textPrimary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
                     maxLines = 2,
@@ -300,12 +302,12 @@ fun AuroraUpdateCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
-                            .background(Color(0xFF279df1).copy(alpha = 0.2f), RoundedCornerShape(4.dp))
+                            .background(colors.accent.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
                             text = item.update.episodeName,
-                            color = Color(0xFF279df1),
+                            color = colors.accent,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             maxLines = 1,
