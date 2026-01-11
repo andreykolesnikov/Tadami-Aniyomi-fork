@@ -88,7 +88,7 @@ object SettingsMainScreen : Screen() {
         val uiPreferences = Injekt.get<UiPreferences>()
         val theme by uiPreferences.appTheme().collectAsState()
         
-        if (theme == AppTheme.AURORA && !twoPane) {
+        if (theme.isAuroraStyle && !twoPane) {
             SettingsAuroraContent(
                 navigator = navigator,
                 onBackClick = backPress::invoke

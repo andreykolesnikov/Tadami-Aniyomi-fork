@@ -130,7 +130,7 @@ data object AnimeLibraryTab : Tab {
 
         Scaffold(
             topBar = { scrollBehavior ->
-                if (theme == AppTheme.AURORA) return@Scaffold
+                if (theme.isAuroraStyle) return@Scaffold
 
                 val title = state.getToolbarTitle(
                     defaultTitle = defaultTitle,
@@ -204,7 +204,7 @@ data object AnimeLibraryTab : Tab {
                     )
                 }
                 else -> {
-                    if (theme == AppTheme.AURORA) {
+                    if (theme.isAuroraStyle) {
                         val currentCategoryItems = state.getAnimelibItemsByPage(screenModel.activeCategoryIndex)
                         val libraryItems = currentCategoryItems.map { it.libraryAnime }
                         AnimeLibraryAuroraContent(

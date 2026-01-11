@@ -87,7 +87,7 @@ object HomeScreen : Screen() {
     override fun Content() {
         val navStyle by uiPreferences.navStyle().collectAsState()
         val theme by uiPreferences.appTheme().collectAsState()
-        val isAurora = theme == AppTheme.AURORA
+        val isAurora = theme.isAuroraStyle
         val navigator = LocalNavigator.currentOrThrow
         TabNavigator(
             tab = defaultTab,
@@ -262,7 +262,7 @@ object HomeScreen : Screen() {
         val scope = rememberCoroutineScope()
         val selected = tabNavigator.current::class == tab::class
         val theme by uiPreferences.appTheme().collectAsState()
-        val isAurora = theme == AppTheme.AURORA
+        val isAurora = theme.isAuroraStyle
         
         val colors = if (isAurora) {
             val auroraColors = AuroraTheme.colors

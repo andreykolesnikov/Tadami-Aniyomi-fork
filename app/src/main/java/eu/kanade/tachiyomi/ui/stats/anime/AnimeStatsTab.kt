@@ -39,7 +39,7 @@ fun Screen.animeStatsTab(): TabContent {
             if (state is StatsScreenState.Loading) {
                 LoadingScreen()
             } else {
-                if (theme == AppTheme.AURORA) {
+                if (theme.isAuroraStyle) {
                     AnimeStatsAuroraContent(
                         state = state as StatsScreenState.SuccessAnime,
                         paddingValues = contentPadding,

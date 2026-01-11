@@ -67,7 +67,7 @@ data object UpdatesTab : Tab {
         val theme by uiPreferences.appTheme().collectAsState()
         val fromMore = currentNavigationStyle() == NavStyle.MOVE_UPDATES_TO_MORE
 
-        if (theme == AppTheme.AURORA) {
+        if (theme.isAuroraStyle) {
             val screenModel = rememberScreenModel { AnimeUpdatesScreenModel() }
             val state by screenModel.state.collectAsState()
             val navigator = LocalNavigator.currentOrThrow

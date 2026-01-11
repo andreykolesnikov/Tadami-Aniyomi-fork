@@ -80,7 +80,7 @@ data object MoreTab : Tab {
         val uiPreferences = Injekt.get<UiPreferences>()
         val theme by uiPreferences.appTheme().preferenceCollectAsState()
 
-        if (theme == AppTheme.AURORA) {
+        if (theme.isAuroraStyle) {
             val downloadedOnly by screenModel.downloadedOnlyFlow.collectAsState()
             val incognitoMode by screenModel.incognitoModeFlow.collectAsState()
             
