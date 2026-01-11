@@ -22,8 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import eu.kanade.presentation.theme.AuroraTheme
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,17 +37,12 @@ fun GlobalAnimeSearchAuroraContent(
     onAnimeClicked: (Long) -> Unit,
     contentPadding: PaddingValues
 ) {
-    val backgroundBrush = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF1e1b4b),
-            Color(0xFF101b22)
-        )
-    )
+    val colors = AuroraTheme.colors
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundBrush)
+            .background(colors.backgroundGradient)
     ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -63,7 +57,7 @@ fun GlobalAnimeSearchAuroraContent(
                     Text(
                         text = "Search",
                         style = MaterialTheme.typography.headlineMedium,
-                        color = Color.White,
+                        color = colors.textPrimary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
@@ -83,7 +77,7 @@ fun GlobalAnimeSearchAuroraContent(
                             .fillMaxWidth()
                             .aspectRatio(0.7f)
                             .clip(RoundedCornerShape(12.dp))
-                            .background(Color.White.copy(alpha = 0.05f))
+                            .background(colors.cardBackground)
                     ) {
                         AsyncImage(
                             model = anime.thumbnailUrl,
@@ -94,7 +88,7 @@ fun GlobalAnimeSearchAuroraContent(
                     }
                     Text(
                         text = anime.title,
-                        color = Color.White,
+                        color = colors.textPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
                         maxLines = 2,

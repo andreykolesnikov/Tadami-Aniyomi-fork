@@ -6,15 +6,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -29,8 +25,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import eu.kanade.presentation.theme.AuroraTheme
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,17 +42,12 @@ fun AnimeLibraryAuroraContent(
     onAnimeClicked: (Long) -> Unit,
     contentPadding: PaddingValues
 ) {
-    val backgroundBrush = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF1e1b4b),
-            Color(0xFF101b22)
-        )
-    )
+    val colors = AuroraTheme.colors
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundBrush)
+            .background(colors.backgroundGradient)
     ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -70,7 +61,7 @@ fun AnimeLibraryAuroraContent(
                     Text(
                         text = stringResource(AYMR.strings.aurora_library),
                         style = MaterialTheme.typography.headlineMedium,
-                        color = Color.White,
+                        color = colors.textPrimary,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -88,6 +79,8 @@ fun AuroraAnimeCard(
     item: LibraryAnime,
     onClick: (Long) -> Unit
 ) {
+    val colors = AuroraTheme.colors
+    
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -98,7 +91,7 @@ fun AuroraAnimeCard(
                 .fillMaxWidth()
                 .aspectRatio(0.7f)
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color.White.copy(alpha = 0.05f))
+                .background(colors.cardBackground)
         ) {
             AsyncImage(
                 model = item.anime.thumbnailUrl,
@@ -113,12 +106,12 @@ fun AuroraAnimeCard(
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(8.dp)
-                        .background(Color(0xFF279df1), RoundedCornerShape(4.dp))
+                        .background(colors.accent, RoundedCornerShape(4.dp))
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
                         text = item.unseenCount.toString(),
-                        color = Color.White,
+                        color = colors.textOnAccent,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -147,13 +140,13 @@ fun AuroraAnimeCard(
                     .align(Alignment.BottomEnd)
                     .padding(8.dp)
                     .size(36.dp)
-                    .background(Color(0xFF279df1), RoundedCornerShape(8.dp)),
+                    .background(colors.accent, RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     Icons.Filled.PlayArrow,
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = colors.textOnAccent,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -161,7 +154,7 @@ fun AuroraAnimeCard(
         
         Text(
             text = item.anime.title,
-            color = Color.White,
+            color = colors.textPrimary,
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
             maxLines = 2,

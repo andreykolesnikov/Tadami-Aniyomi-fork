@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import eu.kanade.presentation.theme.AuroraTheme
 import tachiyomi.presentation.core.i18n.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import tachiyomi.i18n.aniyomi.AYMR
@@ -62,17 +63,12 @@ fun BrowseScreenAurora(
     onExtensionsClick: () -> Unit,
     onMigrateClick: () -> Unit,
 ) {
-    val backgroundBrush = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF1e1b4b),
-            Color(0xFF101b22)
-        )
-    )
+    val colors = AuroraTheme.colors
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundBrush)
+            .background(colors.backgroundGradient)
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -148,6 +144,8 @@ fun BrowseScreenAurora(
 private fun BrowseAuroraHeader(
     onSearchClick: () -> Unit
 ) {
+    val colors = AuroraTheme.colors
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -159,26 +157,26 @@ private fun BrowseAuroraHeader(
             Text(
                 text = stringResource(AYMR.strings.aurora_browse),
                 style = MaterialTheme.typography.headlineMedium,
-                color = Color.White,
+                color = colors.textPrimary,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = stringResource(AYMR.strings.aurora_discover_sources),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.6f)
+                color = colors.textSecondary
             )
         }
 
         IconButton(
             onClick = onSearchClick,
             modifier = Modifier
-                .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                .background(colors.glass, CircleShape)
                 .size(48.dp)
         ) {
             Icon(
                 imageVector = Icons.Filled.Search,
                 contentDescription = stringResource(AYMR.strings.aurora_global_search),
-                tint = Color.White
+                tint = colors.textPrimary
             )
         }
     }
@@ -224,13 +222,15 @@ private fun QuickActionCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val colors = AuroraTheme.colors
+    
     Card(
         modifier = modifier
             .height(80.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.08f)
+            containerColor = colors.glass
         )
     ) {
         Column(
@@ -243,13 +243,13 @@ private fun QuickActionCard(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color(0xFF279df1),
+                tint = colors.accent,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = title,
-                color = Color.White,
+                color = colors.textPrimary,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
@@ -261,6 +261,8 @@ private fun QuickActionCard(
 
 @Composable
 private fun SourcesSectionHeader(title: String, showDivider: Boolean = false) {
+    val colors = AuroraTheme.colors
+    
     Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)) {
         if (showDivider) {
             Spacer(modifier = Modifier.height(8.dp))
@@ -268,13 +270,13 @@ private fun SourcesSectionHeader(title: String, showDivider: Boolean = false) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp)
-                    .background(Color.White.copy(alpha = 0.1f))
+                    .background(colors.divider)
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
         Text(
             text = title,
-            color = Color.White,
+            color = colors.textPrimary,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp
         )
@@ -283,7 +285,7 @@ private fun SourcesSectionHeader(title: String, showDivider: Boolean = false) {
             modifier = Modifier
                 .width(40.dp)
                 .height(3.dp)
-                .background(Color(0xFF279df1), RoundedCornerShape(2.dp))
+                .background(colors.accent, RoundedCornerShape(2.dp))
         )
     }
 }
@@ -314,6 +316,8 @@ private fun PinnedSourceCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
+    val colors = AuroraTheme.colors
+    
     Card(
         modifier = Modifier
             .width(140.dp)
@@ -321,7 +325,7 @@ private fun PinnedSourceCard(
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF279df1).copy(alpha = 0.15f)
+            containerColor = colors.accent.copy(alpha = 0.15f)
         )
     ) {
         Column(
@@ -332,7 +336,7 @@ private fun PinnedSourceCard(
         ) {
             Text(
                 text = source.name,
-                color = Color.White,
+                color = colors.textPrimary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
                 maxLines = 1,
@@ -340,7 +344,7 @@ private fun PinnedSourceCard(
             )
             Text(
                 text = source.lang.uppercase(),
-                color = Color(0xFF279df1),
+                color = colors.accent,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -354,7 +358,10 @@ private fun SourceCard(
     onClick: () -> Unit,
     onPinClick: () -> Unit
 ) {
+    val colors = AuroraTheme.colors
     val isPinned = Pin.Actual in source.pin
+    val successColor = Color(0xFF22c55e)
+    
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -362,9 +369,9 @@ private fun SourceCard(
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.08f)
+            containerColor = colors.glass
         ),
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f))
+        border = BorderStroke(1.dp, colors.divider)
     ) {
         Row(
             modifier = Modifier
@@ -379,8 +386,8 @@ private fun SourceCard(
                     .background(
                         Brush.linearGradient(
                             colors = listOf(
-                                Color(0xFF279df1).copy(alpha = 0.3f),
-                                Color(0xFF1e1b4b).copy(alpha = 0.5f)
+                                colors.accent.copy(alpha = 0.3f),
+                                colors.gradientStart.copy(alpha = 0.5f)
                             )
                         )
                     ),
@@ -388,7 +395,7 @@ private fun SourceCard(
             ) {
                 Text(
                     text = source.name.take(2).uppercase(),
-                    color = Color(0xFF279df1),
+                    color = colors.accent,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
@@ -399,7 +406,7 @@ private fun SourceCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = source.name,
-                    color = Color.White,
+                    color = colors.textPrimary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     maxLines = 1,
@@ -409,12 +416,12 @@ private fun SourceCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
-                            .background(Color(0xFF279df1).copy(alpha = 0.2f), RoundedCornerShape(4.dp))
+                            .background(colors.accent.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
                         Text(
                             text = source.lang.uppercase(),
-                            color = Color(0xFF279df1),
+                            color = colors.accent,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -423,12 +430,12 @@ private fun SourceCard(
                         Spacer(modifier = Modifier.width(8.dp))
                         Box(
                             modifier = Modifier
-                                .background(Color(0xFF22c55e).copy(alpha = 0.2f), RoundedCornerShape(4.dp))
+                                .background(successColor.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
                                 .padding(horizontal = 6.dp, vertical = 2.dp)
                         ) {
                             Text(
                                 text = stringResource(AYMR.strings.aurora_pinned_badge),
-                                color = Color(0xFF22c55e),
+                                color = successColor,
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -444,7 +451,7 @@ private fun SourceCard(
                 Icon(
                     imageVector = if (isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
                     contentDescription = stringResource(AYMR.strings.aurora_pinned_badge),
-                    tint = if (isPinned) Color(0xFF22c55e) else Color.White.copy(alpha = 0.5f),
+                    tint = if (isPinned) successColor else colors.textSecondary,
                     modifier = Modifier.size(24.dp)
                 )
             }

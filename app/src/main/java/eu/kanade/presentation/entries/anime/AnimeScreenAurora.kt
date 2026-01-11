@@ -52,6 +52,7 @@ import aniyomi.domain.anime.SeasonAnime
 import coil3.compose.AsyncImage
 import eu.kanade.presentation.entries.DownloadAction
 import eu.kanade.presentation.entries.anime.components.EpisodeDownloadAction
+import eu.kanade.presentation.theme.AuroraTheme
 import eu.kanade.tachiyomi.ui.entries.anime.AnimeScreenModel
 import eu.kanade.tachiyomi.ui.entries.anime.EpisodeList
 import tachiyomi.domain.items.episode.model.Episode
@@ -110,21 +111,24 @@ fun AnimeScreenAuroraImpl(
 ) {
     val anime = state.anime
     val episodes = state.episodeListItems
+    val colors = AuroraTheme.colors
 
-    Box(modifier = Modifier.fillMaxSize().background(Color(0xFF101b22))) {
-        // Ambient Aurora Background
+    Box(modifier = Modifier.fillMaxSize().background(colors.background)) {
         AsyncImage(
             model = anime.thumbnailUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
-                .blur(80.dp)
-                .background(Color.Black.copy(alpha = 0.4f))
+                .blur(100.dp)
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colors.cardGradient)
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
-            // Top App Bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -137,9 +141,9 @@ fun AnimeScreenAuroraImpl(
                     onClick = navigateUp,
                     modifier = Modifier
                         .size(48.dp)
-                        .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                        .background(colors.glass, CircleShape)
                 ) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = null, tint = Color.White)
+                    Icon(Icons.Filled.ArrowBack, contentDescription = null, tint = colors.textPrimary)
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -147,12 +151,12 @@ fun AnimeScreenAuroraImpl(
                         onClick = onAddToLibraryClicked,
                         modifier = Modifier
                             .size(48.dp)
-                            .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                            .background(colors.glass, CircleShape)
                     ) {
                         Icon(
                             if (anime.favorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                             contentDescription = null,
-                            tint = if (anime.favorite) Color.Red else Color.White
+                            tint = if (anime.favorite) Color.Red else colors.textPrimary
                         )
                     }
                     if (onShareClicked != null) {
@@ -160,9 +164,9 @@ fun AnimeScreenAuroraImpl(
                             onClick = onShareClicked,
                             modifier = Modifier
                                 .size(48.dp)
-                                .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                                .background(colors.glass, CircleShape)
                         ) {
-                            Icon(Icons.Filled.Share, contentDescription = null, tint = Color.White)
+                            Icon(Icons.Filled.Share, contentDescription = null, tint = colors.textPrimary)
                         }
                     }
                 }
@@ -172,7 +176,6 @@ fun AnimeScreenAuroraImpl(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 100.dp)
             ) {
-                // Header Image
                 item {
                     Box(
                         modifier = Modifier
@@ -206,14 +209,14 @@ fun AnimeScreenAuroraImpl(
                         modifier = Modifier
                             .padding(16.dp)
                             .clip(RoundedCornerShape(24.dp))
-                            .background(Color.White.copy(alpha = 0.08f))
+                            .background(colors.glass)
                             .padding(24.dp)
                     ) {
                         Text(
                             text = anime.title,
                             fontSize = 32.sp,
                             fontWeight = FontWeight.ExtraBold,
-                            color = Color.White,
+                            color = colors.textPrimary,
                             lineHeight = 36.sp
                         )
                         
@@ -226,12 +229,12 @@ fun AnimeScreenAuroraImpl(
                                 anime.genre!!.take(3).forEachIndexed { index, genre ->
                                     Text(
                                         text = genre,
-                                        color = Color(0xFF279df1),
+                                        color = colors.accent,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.SemiBold
                                     )
                                     if (index < minOf(anime.genre!!.size, 3) - 1) {
-                                        Text("•", color = Color.White.copy(alpha = 0.3f), fontSize = 12.sp)
+                                        Text("•", color = colors.textSecondary, fontSize = 12.sp)
                                     }
                                 }
                             }
@@ -242,7 +245,7 @@ fun AnimeScreenAuroraImpl(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 24.dp)
-                                .background(Color.White.copy(alpha = 0.0f), shape = RoundedCornerShape(0.dp)),
+                                .background(Color.Transparent, shape = RoundedCornerShape(0.dp)),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                              // Status/Rating Placeholder
@@ -250,20 +253,20 @@ fun AnimeScreenAuroraImpl(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(Icons.Filled.Star, contentDescription = null, tint = Color(0xFFFACC15), modifier = Modifier.size(18.dp))
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text("4.9", color = Color.White, fontWeight = FontWeight.Bold)
+                                    Text("4.9", color = colors.textPrimary, fontWeight = FontWeight.Bold)
                                 }
-                                Text(stringResource(AYMR.strings.aurora_rating), color = Color.White.copy(alpha = 0.5f), fontSize = 10.sp, letterSpacing = 1.sp)
+                                Text(stringResource(AYMR.strings.aurora_rating), color = colors.textSecondary, fontSize = 10.sp, letterSpacing = 1.sp)
                              }
                              Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(anime.status.toString(), color = Color.White, fontWeight = FontWeight.Bold)
-                                Text(stringResource(AYMR.strings.aurora_status), color = Color.White.copy(alpha = 0.5f), fontSize = 10.sp, letterSpacing = 1.sp)
+                                Text(anime.status.toString(), color = colors.textPrimary, fontWeight = FontWeight.Bold)
+                                Text(stringResource(AYMR.strings.aurora_status), color = colors.textSecondary, fontSize = 10.sp, letterSpacing = 1.sp)
                              }
                         }
 
                         // Description
                         Text(
                             text = anime.description ?: stringResource(AYMR.strings.aurora_no_description),
-                            color = Color.White.copy(alpha = 0.8f),
+                            color = colors.textPrimary,
                             fontSize = 14.sp,
                             lineHeight = 20.sp,
                             maxLines = 4,
@@ -278,14 +281,14 @@ fun AnimeScreenAuroraImpl(
                                     .padding(top = 16.dp)
                                     .height(48.dp)
                                     .clip(RoundedCornerShape(50))
-                                    .background(Color.White.copy(alpha = 0.1f))
+                                    .background(colors.glass)
                                     .clickable(onClick = onDubbingClicked),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Filled.Translate, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
+                                    Icon(Icons.Filled.Translate, contentDescription = null, tint = colors.textPrimary, modifier = Modifier.size(20.dp))
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text(selectedDubbing ?: stringResource(AYMR.strings.aurora_select_dubbing), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                    Text(selectedDubbing ?: stringResource(AYMR.strings.aurora_select_dubbing), color = colors.textPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                                 }
                             }
                         }
@@ -297,14 +300,14 @@ fun AnimeScreenAuroraImpl(
                                 .padding(top = 16.dp)
                                 .height(56.dp)
                                 .clip(RoundedCornerShape(50))
-                                .background(Color(0xFF279df1))
+                                .background(colors.accent)
                                 .clickable(onClick = onContinueWatching),
                             contentAlignment = Alignment.Center
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Filled.PlayArrow, contentDescription = null, tint = Color.White, modifier = Modifier.size(28.dp))
+                                Icon(Icons.Filled.PlayArrow, contentDescription = null, tint = colors.textOnAccent, modifier = Modifier.size(28.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text(stringResource(AYMR.strings.aurora_continue), color = Color.White, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
+                                Text(stringResource(AYMR.strings.aurora_continue), color = colors.textOnAccent, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
                             }
                         }
                     }
@@ -317,8 +320,8 @@ fun AnimeScreenAuroraImpl(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(stringResource(AYMR.strings.aurora_episodes_header), color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                        Text(stringResource(AYMR.strings.aurora_episode_count, episodes.size), color = Color(0xFF279df1), fontWeight = FontWeight.Bold)
+                        Text(stringResource(AYMR.strings.aurora_episodes_header), color = colors.textPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        Text(stringResource(AYMR.strings.aurora_episode_count, episodes.size), color = colors.accent, fontWeight = FontWeight.Bold)
                     }
                 }
 
@@ -331,7 +334,7 @@ fun AnimeScreenAuroraImpl(
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 6.dp)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(Color.White.copy(alpha = 0.05f))
+                                .background(colors.glass.copy(alpha = 0.5f))
                                 .clickable { onEpisodeClicked(episode, false) }
                                 .padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically
@@ -357,7 +360,7 @@ fun AnimeScreenAuroraImpl(
                                         modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.6f)),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Icon(Icons.Filled.PlayArrow, contentDescription = null, tint = Color.White)
+                                        Icon(Icons.Filled.PlayArrow, contentDescription = null, tint = colors.textPrimary)
                                     }
                                 }
                             }
@@ -367,7 +370,7 @@ fun AnimeScreenAuroraImpl(
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = episode.name,
-                                    color = Color.White,
+                                    color = colors.textPrimary,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 14.sp,
                                     maxLines = 1,
@@ -376,7 +379,7 @@ fun AnimeScreenAuroraImpl(
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = stringResource(AYMR.strings.aurora_episode_progress, (episode.episodeNumber % 1000).toInt()),
-                                    color = Color.White.copy(alpha = 0.4f),
+                                    color = colors.textSecondary,
                                     fontSize = 12.sp
                                 )
                                 if (episode.seen) {
@@ -386,14 +389,14 @@ fun AnimeScreenAuroraImpl(
                                             .fillMaxWidth()
                                             .height(4.dp)
                                             .clip(RoundedCornerShape(50))
-                                            .background(Color.White.copy(alpha = 0.1f))
+                                            .background(colors.divider)
                                     ) {
                                         Box(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .height(4.dp)
                                                 .clip(RoundedCornerShape(50))
-                                                .background(Color(0xFF279df1))
+                                                .background(colors.accent)
                                         )
                                     }
                                 }
@@ -411,7 +414,7 @@ fun AnimeScreenAuroraImpl(
                                         ),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Icon(Icons.Filled.Download, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
+                                    Icon(Icons.Filled.Download, contentDescription = null, tint = colors.textSecondary)
                                 }
                             }
                         }
