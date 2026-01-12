@@ -338,6 +338,11 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        eu.kanade.tachiyomi.ui.home.HomeHubScreenModel.saveOnExit()
+    }
+
     override fun onProvideAssistContent(outContent: AssistContent) {
         super.onProvideAssistContent(outContent)
         when (val screen = navigator?.lastItem) {
@@ -554,7 +559,10 @@ class MainActivity : BaseActivity() {
                 }
                 null
             }
-            else -> return false
+            else -> {
+                ready = true
+                return false
+            }
         }
 
         if (tabToOpen != null) {

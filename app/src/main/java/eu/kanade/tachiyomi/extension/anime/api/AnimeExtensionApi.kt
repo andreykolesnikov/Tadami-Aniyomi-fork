@@ -86,9 +86,7 @@ internal class AnimeExtensionApi {
             findExtensions().also { lastExtCheck.set(Instant.now().toEpochMilli()) }
         }
 
-        val installedExtensions = AnimeExtensionLoader.loadExtensions(context)
-            .filterIsInstance<AnimeLoadResult.Success>()
-            .map { it.extension }
+        val installedExtensions = animeExtensionManager.installedExtensionsFlow.value
 
         val extensionsWithUpdate = mutableListOf<AnimeExtension.Installed>()
         for (installedExt in installedExtensions) {

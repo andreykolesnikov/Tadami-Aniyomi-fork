@@ -4,7 +4,6 @@ import android.content.Context
 import eu.kanade.tachiyomi.extension.ExtensionUpdateNotifier
 import eu.kanade.tachiyomi.extension.manga.MangaExtensionManager
 import eu.kanade.tachiyomi.extension.manga.model.MangaExtension
-import eu.kanade.tachiyomi.extension.manga.model.MangaLoadResult
 import eu.kanade.tachiyomi.extension.manga.util.MangaExtensionLoader
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.network.NetworkHelper
@@ -86,9 +85,7 @@ internal class MangaExtensionApi {
             findExtensions().also { lastExtCheck.set(Instant.now().toEpochMilli()) }
         }
 
-        val installedExtensions = MangaExtensionLoader.loadMangaExtensions(context)
-            .filterIsInstance<MangaLoadResult.Success>()
-            .map { it.extension }
+        val installedExtensions = extensionManager.installedExtensionsFlow.value
 
         val extensionsWithUpdate = mutableListOf<MangaExtension.Installed>()
         for (installedExt in installedExtensions) {

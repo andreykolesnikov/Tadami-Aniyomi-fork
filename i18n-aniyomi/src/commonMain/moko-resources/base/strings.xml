@@ -608,6 +608,26 @@
     <string name="aurora_nothing_to_continue">Nothing to continue watching</string>
     <string name="aurora_add_anime_to_library">Add some anime to your library to see them here</string>
 
+    <!-- Dynamic Greetings -->
+    <string name="aurora_greeting_ready">Ready to watch?</string>
+    <string name="aurora_greeting_whats_next">What\'s next?</string>
+    <string name="aurora_greeting_dive_in">Let\'s dive in</string>
+    <string name="aurora_greeting_binge_time">Binge time?</string>
+    <string name="aurora_greeting_queue_awaits">Your queue awaits</string>
+    <string name="aurora_greeting_got_minute">Got a minute?</string>
+    <string name="aurora_greeting_pick_good">Pick something good</string>
+    <string name="aurora_greeting_new_episodes">New episodes await</string>
+    <string name="aurora_greeting_morning">Good morning</string>
+    <string name="aurora_greeting_afternoon">Good afternoon</string>
+    <string name="aurora_greeting_evening">Good evening</string>
+    <string name="aurora_greeting_night_owl">Night owl mode</string>
+    <string name="aurora_greeting_still_up">Still up?</string>
+    <string name="aurora_greeting_late_night">Late night vibes</string>
+    <string name="aurora_greeting_long_time">Long time no see</string>
+    <string name="aurora_greeting_missed_you">Missed you!</string>
+    <string name="aurora_greeting_youre_back">You\'re back!</string>
+    <string name="aurora_greeting_back_for_more">Back for more?</string>
+
     <!-- Browse Screen -->
     <string name="aurora_browse">Browse</string>
     <string name="aurora_discover_sources">Discover anime sources</string>

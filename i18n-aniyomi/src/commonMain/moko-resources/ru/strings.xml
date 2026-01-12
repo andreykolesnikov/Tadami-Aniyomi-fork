@@ -539,8 +539,32 @@
     <string name="aurora_recently_added">Недавно добавленные</string>
     <string name="aurora_more">Ещё</string>
     <string name="aurora_change_nickname">Изменить имя</string>
+    <string name="aurora_recently_watched">Недавно просмотренные</string>
+    <string name="aurora_open_source">Открыть источник</string>
+    <string name="aurora_episode_progress">Эпизод %d</string>
+    <string name="aurora_tap_to_change">Нажмите для изменения</string>
     <string name="aurora_nothing_to_continue">Нечего продолжать</string>
     <string name="aurora_add_anime_to_library">Добавьте аниме в библиотеку, чтобы увидеть их здесь</string>
+
+    <!-- Dynamic Greetings -->
+    <string name="aurora_greeting_ready">Готовы смотреть?</string>
+    <string name="aurora_greeting_whats_next">Что дальше?</string>
+    <string name="aurora_greeting_dive_in">Погнали!</string>
+    <string name="aurora_greeting_binge_time">Время марафона?</string>
+    <string name="aurora_greeting_queue_awaits">Очередь ждёт</string>
+    <string name="aurora_greeting_got_minute">Есть минутка?</string>
+    <string name="aurora_greeting_pick_good">Выбери что-нибудь</string>
+    <string name="aurora_greeting_new_episodes">Новые серии ждут</string>
+    <string name="aurora_greeting_morning">Доброе утро</string>
+    <string name="aurora_greeting_afternoon">Добрый день</string>
+    <string name="aurora_greeting_evening">Добрый вечер</string>
+    <string name="aurora_greeting_night_owl">Режим совы</string>
+    <string name="aurora_greeting_still_up">Ещё не спишь?</string>
+    <string name="aurora_greeting_late_night">Ночная атмосфера</string>
+    <string name="aurora_greeting_long_time">Давно не виделись</string>
+    <string name="aurora_greeting_missed_you">Скучали!</string>
+    <string name="aurora_greeting_youre_back">С возвращением!</string>
+    <string name="aurora_greeting_back_for_more">За добавкой?</string>
 
     <!-- Browse Screen -->
     <string name="aurora_browse">Обзор</string>

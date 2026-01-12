@@ -138,6 +138,13 @@ AND favorite = 1
 AND status IN :statuses
 ORDER BY next_update ASC;
 
+getRecentFavorites:
+SELECT *
+FROM animes
+WHERE favorite = 1
+ORDER BY last_update DESC
+LIMIT :limit;
+
 resetViewerFlags:
 UPDATE animes
 SET viewer = 0;

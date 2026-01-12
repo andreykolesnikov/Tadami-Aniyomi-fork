@@ -228,7 +228,7 @@ class AppModule(val app: Application) : InjektModule {
         addSingletonFactory { ExternalIntents() }
 
         // Asynchronously init expensive components for a faster cold start
-        ContextCompat.getMainExecutor(app).execute {
+        java.util.concurrent.Executors.newSingleThreadExecutor().execute {
             get<NetworkHelper>()
 
             get<MangaSourceManager>()

@@ -70,6 +70,12 @@ class AnimeRepositoryImpl(
         }
     }
 
+    override fun getRecentFavorites(limit: Long): Flow<List<Anime>> {
+        return handler.subscribeToList {
+            animesQueries.getRecentFavorites(limit, AnimeMapper::mapAnime)
+        }
+    }
+
     override fun getAnimeFavoritesBySourceId(sourceId: Long): Flow<List<Anime>> {
         return handler.subscribeToList { animesQueries.getFavoriteBySourceId(sourceId, AnimeMapper::mapAnime) }
     }

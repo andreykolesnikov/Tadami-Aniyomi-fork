@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -168,6 +169,7 @@ private fun HomeHubScreen(
             TopBar(
                 userName = state.userName,
                 userAvatar = state.userAvatar,
+                greeting = state.greeting,
                 onAvatarClick = onAvatarClick,
                 onNameClick = onNameClick,
                 onSearchClick = onSearchClick
@@ -222,6 +224,7 @@ private fun HomeHubScreen(
 private fun TopBar(
     userName: String,
     userAvatar: String,
+    greeting: dev.icerock.moko.resources.StringResource,
     onAvatarClick: () -> Unit,
     onNameClick: () -> Unit,
     onSearchClick: () -> Unit
@@ -254,23 +257,38 @@ private fun TopBar(
         Spacer(Modifier.width(12.dp))
 
         Row(
-            modifier = Modifier.clickable(onClick = onNameClick),
+            modifier = Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .clickable(onClick = onNameClick)
+                .padding(horizontal = 8.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(stringResource(AYMR.strings.aurora_welcome_back), style = MaterialTheme.typography.labelSmall, color = colors.accent, fontWeight = FontWeight.Bold)
-                Text(userName, style = MaterialTheme.typography.titleMedium, color = colors.textPrimary, fontWeight = FontWeight.Bold)
-                if (userName == "User") {
-                    Text(stringResource(AYMR.strings.aurora_tap_to_change), style = MaterialTheme.typography.labelSmall, color = colors.textSecondary)
+                Text(
+                    text = stringResource(greeting),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = colors.accent,
+                    fontWeight = FontWeight.Bold
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 2.dp)
+                ) {
+                    Text(
+                        text = userName,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = colors.textPrimary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = null,
+                        modifier = Modifier.size(12.dp),
+                        tint = colors.textSecondary.copy(alpha = 0.7f)
+                    )
                 }
             }
-            Spacer(Modifier.width(6.dp))
-            Icon(
-                Icons.Filled.Edit,
-                contentDescription = null,
-                tint = colors.textSecondary,
-                modifier = Modifier.size(14.dp)
-            )
         }
 
         Spacer(Modifier.weight(1f))

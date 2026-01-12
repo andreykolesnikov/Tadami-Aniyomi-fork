@@ -172,7 +172,7 @@ fun AnimeScreen(
     val uiPreferences = Injekt.get<eu.kanade.domain.ui.UiPreferences>()
     val theme by uiPreferences.appTheme().collectAsState()
 
-    if (theme == eu.kanade.domain.ui.model.AppTheme.AURORA) {
+    if (theme.isAuroraStyle && !isTabletUi) {
         AnimeScreenAuroraImpl(
             state = state,
             snackbarHostState = snackbarHostState,

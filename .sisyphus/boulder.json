@@ -1,0 +1,13 @@
+{
+  "active_plan": "D:\\lnreader\\ANIYOMI(ALL)\\aniyomi\\.sisyphus\\plans\\aurora-fix-and-tadami-rebrand.md",
+  "started_at": "2026-01-12T11:34:08.340Z",
+  "session_ids": [
+    "ses_4529bc83bffe7XNjTrtSPLSTAX"
+  ],
+  "plan_name": "aurora-fix-and-tadami-rebrand",
+  "status": "BLOCKED_WAITING_USER",
+  "code_complete": true,
+  "blocked_reason": "Icons must be created by user manually",
+  "completed_tasks": ["Task 0: Aurora fix", "Task 1: App name change", "Task 3: Build verification"],
+  "pending_user_tasks": ["Task 2: Icon creation (3 files)"]
+}
