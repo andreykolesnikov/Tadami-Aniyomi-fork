@@ -601,6 +601,10 @@
     <string name="aurora_recently_added">Recently Added</string>
     <string name="aurora_more">More</string>
     <string name="aurora_change_nickname">Change Nickname</string>
+    <string name="aurora_recently_watched">Recently Watched</string>
+    <string name="aurora_open_source">Open Source</string>
+    <string name="aurora_episode_progress">Episode %d</string>
+    <string name="aurora_tap_to_change">Tap to change</string>
     <string name="aurora_nothing_to_continue">Nothing to continue watching</string>
     <string name="aurora_add_anime_to_library">Add some anime to your library to see them here</string>
 
@@ -662,6 +666,11 @@
     <string name="aurora_statistics">Statistics</string>
     <string name="aurora_more">More</string>
     <string name="aurora_library">Library</string>
+    <string name="aurora_categories">Categories</string>
+    <string name="aurora_data_storage">Data &amp; Storage</string>
+    <string name="aurora_player_settings">Player Settings</string>
+    <string name="aurora_download_paused">Paused</string>
+    <string name="aurora_download_pending">%d pending</string>
     
     <!-- Welcome Screen -->
     <string name="aurora_welcome_title">Start watching</string>

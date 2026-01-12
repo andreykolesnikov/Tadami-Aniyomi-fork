@@ -16,12 +16,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Storage
+import androidx.compose.material.icons.outlined.VideoSettings
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,16 +38,21 @@ import eu.kanade.presentation.theme.AuroraTheme
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import eu.kanade.tachiyomi.ui.more.DownloadQueueState
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.i18n.aniyomi.AYMR
 
 @Composable
 fun MoreScreenAurora(
+    downloadQueueStateProvider: () -> DownloadQueueState,
     downloadedOnly: Boolean,
     onDownloadedOnlyChange: (Boolean) -> Unit,
     incognitoMode: Boolean,
     onIncognitoModeChange: (Boolean) -> Unit,
     onDownloadClick: () -> Unit,
+    onCategoriesClick: () -> Unit,
+    onDataStorageClick: () -> Unit,
+    onPlayerSettingsClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onAboutClick: () -> Unit,
     onStatsClick: () -> Unit,
@@ -92,26 +100,66 @@ fun MoreScreenAurora(
                 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                val downloadQueueState = downloadQueueStateProvider()
+                val downloadSubtitle = when (downloadQueueState) {
+                    DownloadQueueState.Stopped -> null
+                    is DownloadQueueState.Paused -> {
+                        val pending = downloadQueueState.pending
+                        if (pending == 0) {
+                            stringResource(AYMR.strings.aurora_download_paused)
+                        } else {
+                            "${stringResource(AYMR.strings.aurora_download_paused)} • ${stringResource(AYMR.strings.aurora_download_pending, pending)}"
+                        }
+                    }
+                    is DownloadQueueState.Downloading -> {
+                        stringResource(AYMR.strings.aurora_download_pending, downloadQueueState.pending)
+                    }
+                }
                 AuroraSettingItem(
                     title = stringResource(AYMR.strings.aurora_downloads),
+                    subtitle = downloadSubtitle,
                     icon = Icons.Filled.Download,
                     onClick = onDownloadClick
                 )
+                
                 AuroraSettingItem(
-                    title = stringResource(AYMR.strings.aurora_settings),
-                    icon = Icons.Filled.Settings,
-                    onClick = onSettingsClick
+                    title = stringResource(AYMR.strings.aurora_categories),
+                    icon = Icons.AutoMirrored.Outlined.Label,
+                    onClick = onCategoriesClick
                 )
+                
                 AuroraSettingItem(
                     title = stringResource(AYMR.strings.aurora_statistics),
                     icon = Icons.Filled.QueryStats,
                     onClick = onStatsClick
                 )
+                
+                AuroraSettingItem(
+                    title = stringResource(AYMR.strings.aurora_data_storage),
+                    icon = Icons.Outlined.Storage,
+                    onClick = onDataStorageClick
+                )
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                AuroraSettingItem(
+                    title = stringResource(AYMR.strings.aurora_settings),
+                    icon = Icons.Filled.Settings,
+                    onClick = onSettingsClick
+                )
+                
+                AuroraSettingItem(
+                    title = stringResource(AYMR.strings.aurora_player_settings),
+                    icon = Icons.Outlined.VideoSettings,
+                    onClick = onPlayerSettingsClick
+                )
+                
                 AuroraSettingItem(
                     title = stringResource(AYMR.strings.aurora_about),
                     icon = Icons.Filled.Info,
                     onClick = onAboutClick
                 )
+                
                 AuroraSettingItem(
                     title = stringResource(AYMR.strings.aurora_help),
                     icon = Icons.Filled.Help,
@@ -126,7 +174,8 @@ fun MoreScreenAurora(
 fun AuroraSettingItem(
     title: String,
     icon: ImageVector,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    subtitle: String? = null
 ) {
     val colors = AuroraTheme.colors
     
@@ -147,12 +196,21 @@ fun AuroraSettingItem(
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = title,
-            color = colors.textPrimary,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold
-        )
+        Column {
+            Text(
+                text = title,
+                color = colors.textPrimary,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    color = colors.textSecondary,
+                    fontSize = 13.sp
+                )
+            }
+        }
     }
 }
 

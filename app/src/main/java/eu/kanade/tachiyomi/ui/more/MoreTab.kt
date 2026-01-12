@@ -85,11 +85,15 @@ data object MoreTab : Tab {
             val incognitoMode by screenModel.incognitoModeFlow.collectAsState()
             
             MoreScreenAurora(
+                downloadQueueStateProvider = { downloadQueueState },
                 downloadedOnly = downloadedOnly,
                 onDownloadedOnlyChange = { screenModel.toggleDownloadedOnly() },
                 incognitoMode = incognitoMode,
                 onIncognitoModeChange = { screenModel.toggleIncognitoMode() },
                 onDownloadClick = { navigator.push(DownloadsTab) },
+                onCategoriesClick = { navigator.push(CategoriesTab) },
+                onDataStorageClick = { navigator.push(SettingsScreen(SettingsScreen.Destination.DataAndStorage)) },
+                onPlayerSettingsClick = { navigator.push(PlayerSettingsScreen(mainSettings = false)) },
                 onSettingsClick = { navigator.push(SettingsScreen()) },
                 onAboutClick = { navigator.push(AboutScreen) },
                 onStatsClick = { navigator.push(StatsTab) },
