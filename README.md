@@ -20,8 +20,8 @@
 
 ## Features
 
-*   **Anime:** Only for anime.
-*   **Extensions:** Support for Aniyomi anime extensions.
+*   **Anime & Manga:** Unified library for all your media.
+*   **Extensions:** Support for Aniyomi anime and manga extensions.
 *   **Tracking:** Sync with MyAnimeList, AniList, Kitsu, Shikimori, and more.
 *   **Customizable:** Light/Dark themes and various player/reader settings.
 *   **Backups:** Secure your library locally or to the cloud.
@@ -46,6 +46,7 @@ The developer(s) of this application does not have any affiliation with the cont
 Copyright © 2015 Javier Tomás
 Copyright © 2024 Mihon Open Source Project
 Copyright © 2024 Aniyomi Open Source Project
+Copyright © 2026 Tadami Project
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
