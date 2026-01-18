@@ -23,6 +23,7 @@ class GetMangaExtensionLanguages(
                         ext.sources.map { it.lang }
                     }
                 }
+                .filter { it.isNotBlank() }
                 .distinct()
                 .sortedWith(
                     compareBy<String> { it !in enabledLanguage }.then(LocaleHelper.comparator),
