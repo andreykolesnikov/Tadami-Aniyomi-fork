@@ -182,9 +182,13 @@ class AnimeImageFetcher(
         val request = Request.Builder().apply {
             url(url!!)
 
-            val sourceHeaders = sourceLazy.value?.headers
+            val source = sourceLazy.value
+            val sourceHeaders = source?.headers
             if (sourceHeaders != null) {
                 headers(sourceHeaders)
+            }
+            if (source?.baseUrl != null && sourceHeaders?.get("Referer").isNullOrBlank()) {
+                addHeader("Referer", source.baseUrl)
             }
         }
 
