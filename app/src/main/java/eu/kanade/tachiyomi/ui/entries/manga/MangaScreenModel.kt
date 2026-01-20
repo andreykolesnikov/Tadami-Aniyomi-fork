@@ -29,6 +29,7 @@ import eu.kanade.domain.track.manga.interactor.TrackChapter
 import eu.kanade.domain.track.model.AutoTrackState
 import eu.kanade.domain.track.service.TrackPreferences
 import eu.kanade.presentation.entries.DownloadAction
+import eu.kanade.tachiyomi.source.ConfigurableSource
 import eu.kanade.presentation.entries.manga.components.ChapterDownloadAction
 import eu.kanade.presentation.util.formattedMessage
 import eu.kanade.tachiyomi.data.download.manga.MangaDownloadCache
@@ -283,9 +284,25 @@ class MangaScreenModel(
             // Ignore early hints "errors" that aren't handled by OkHttp
             if (e is HttpException && e.code == 103) return
 
+            val formattedMessage = with(context) { e.formattedMessage }
+            if (isAuthenticationError(e, formattedMessage)) {
+                updateSuccessState {
+                    it.copy(
+                        dialog = Dialog.AuthRequiredDialog(
+                            errorMessage = formattedMessage.ifBlank { e.message ?: "Authentication failed" },
+                            sourceId = state.source.id,
+                            sourceName = state.source.name,
+                            isConfigurable = state.source is ConfigurableSource,
+                            source = state.source,
+                        ),
+                    )
+                }
+                return
+            }
+
             logcat(LogPriority.ERROR, e)
             screenModelScope.launch {
-                snackbarHostState.showSnackbar(message = with(context) { e.formattedMessage })
+                snackbarHostState.showSnackbar(message = formattedMessage)
             }
         }
     }
@@ -584,11 +601,26 @@ class MangaScreenModel(
                 }
             }
         } catch (e: Throwable) {
+            val formattedMessage = with(context) { e.formattedMessage }
+            if (isAuthenticationError(e, formattedMessage)) {
+                updateSuccessState {
+                    it.copy(
+                        dialog = Dialog.AuthRequiredDialog(
+                            errorMessage = formattedMessage.ifBlank { e.message ?: "Authentication failed" },
+                            sourceId = state.source.id,
+                            sourceName = state.source.name,
+                            isConfigurable = state.source is ConfigurableSource,
+                            source = state.source,
+                        ),
+                    )
+                }
+                return
+            }
             val message = if (e is NoChaptersException) {
                 context.stringResource(MR.strings.no_chapters_error)
             } else {
                 logcat(LogPriority.ERROR, e)
-                with(context) { e.formattedMessage }
+                formattedMessage
             }
 
             screenModelScope.launch {
@@ -597,6 +629,21 @@ class MangaScreenModel(
             val newManga = mangaRepository.getMangaById(mangaId)
             updateSuccessState { it.copy(manga = newManga, isRefreshingData = false) }
         }
+    }
+
+    private fun isAuthenticationError(exception: Throwable, formattedMessage: String? = null): Boolean {
+        val candidates = listOfNotNull(exception.message, exception.cause?.message, formattedMessage)
+        val haystack = candidates.joinToString(" ").lowercase()
+        return listOf(
+            "авториз",
+            "auth",
+            "login",
+            "логин",
+            "пароль",
+            "password",
+            "настройках",
+            "settings",
+        ).any { it in haystack }
     }
 
     /**
@@ -1103,6 +1150,13 @@ class MangaScreenModel(
         data object SettingsSheet : Dialog
         data object TrackSheet : Dialog
         data object FullCover : Dialog
+        data class AuthRequiredDialog(
+            val errorMessage: String,
+            val sourceId: Long,
+            val sourceName: String,
+            val isConfigurable: Boolean,
+            val source: MangaSource,
+        ) : Dialog
     }
 
     fun dismissDialog() {

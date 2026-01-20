@@ -30,6 +30,7 @@ import eu.kanade.domain.entries.manga.model.toSManga
 import eu.kanade.presentation.category.components.ChangeCategoryDialog
 import eu.kanade.presentation.components.NavigatorAdaptiveSheet
 import eu.kanade.presentation.entries.EditCoverAction
+import eu.kanade.presentation.entries.components.AuthRequiredDialog
 import eu.kanade.presentation.entries.components.DeleteItemsDialog
 import eu.kanade.presentation.entries.components.SetIntervalDialog
 import eu.kanade.presentation.entries.manga.ChapterSettingsDialog
@@ -43,6 +44,7 @@ import eu.kanade.presentation.util.isTabletUi
 import eu.kanade.tachiyomi.source.MangaSource
 import eu.kanade.tachiyomi.source.manga.isLocalOrStub
 import eu.kanade.tachiyomi.source.online.HttpSource
+import eu.kanade.tachiyomi.ui.browse.manga.extension.details.MangaSourcePreferencesScreen
 import eu.kanade.tachiyomi.ui.browse.manga.migration.search.MigrateMangaDialog
 import eu.kanade.tachiyomi.ui.browse.manga.migration.search.MigrateMangaDialogScreenModel
 import eu.kanade.tachiyomi.ui.browse.manga.migration.search.MigrateMangaSearchScreen
@@ -228,6 +230,15 @@ class MangaScreen(
                     onDismissRequest = onDismissRequest,
                     onClickTitle = { navigator.push(MangaScreen(dialog.oldManga.id)) },
                     onPopScreen = { navigator.replace(MangaScreen(dialog.newManga.id)) },
+                )
+            }
+            is MangaScreenModel.Dialog.AuthRequiredDialog -> {
+                AuthRequiredDialog(
+                    onDismissRequest = onDismissRequest,
+                    onSettingsClicked = { navigator.push(MangaSourcePreferencesScreen(dialog.sourceId)) }.takeIf { dialog.isConfigurable },
+                    errorMessage = dialog.errorMessage,
+                    sourceName = dialog.sourceName,
+                    isConfigurable = dialog.isConfigurable,
                 )
             }
             MangaScreenModel.Dialog.SettingsSheet -> ChapterSettingsDialog(
