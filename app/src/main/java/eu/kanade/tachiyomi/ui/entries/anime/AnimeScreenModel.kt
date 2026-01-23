@@ -1610,6 +1610,12 @@ class AnimeScreenModel(
         updateSuccessState { it.copy(dialog = Dialog.ShowQualities(episode, it.anime, it.source)) }
     }
 
+    sealed interface ShikimoriError {
+        data object NetworkError : ShikimoriError
+        data object NotFound : ShikimoriError
+        data object Disabled : ShikimoriError
+    }
+
     sealed interface State {
         @Immutable
         data object Loading : State
