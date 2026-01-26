@@ -3,13 +3,14 @@ package tachiyomi.domain.shikimori.model
 /**
  * Metadata from Shikimori.one for an anime.
  *
- * Used to display rating, type, and cover from Shikimori in Aurora anime cards.
+ * Used to display rating, type, status, and cover from Shikimori in Aurora anime cards.
  */
 data class ShikimoriMetadata(
     val animeId: Long,
     val shikimoriId: Long?,       // null = not found in Shikimori
     val score: Double?,           // Rating (e.g., 8.5)
     val kind: String?,            // Type: tv, movie, ova, special, ona, music
+    val status: String?,          // Status: anons, ongoing, released, discontinued
     val coverUrl: String?,        // URL to Shikimori poster
     val searchQuery: String,      // Query used to search (for debugging)
     val updatedAt: Long,          // Timestamp of last update
@@ -27,4 +28,15 @@ data class ShikimoriMetadata(
      * Check if metadata contains any useful data.
      */
     fun hasData(): Boolean = score != null || kind != null || coverUrl != null
+
+    /**
+     * Get formatted status string in Russian.
+     */
+    fun getFormattedStatus(): String? = when (status?.lowercase()) {
+        "anons" -> "Анонс"
+        "ongoing" -> "Онгоинг"
+        "released" -> "Завершён"
+        "discontinued" -> "Брошен"
+        else -> null
+    }
 }

@@ -6,6 +6,7 @@ CREATE TABLE shikimori_metadata_cache (
     shikimori_id INTEGER,
     score REAL,
     kind TEXT,
+    status TEXT,
     cover_url TEXT,
     search_query TEXT NOT NULL,
     updated_at INTEGER NOT NULL,
@@ -22,15 +23,16 @@ WHERE anime_id = :animeId;
 
 upsert:
 INSERT INTO shikimori_metadata_cache(
-    anime_id, shikimori_id, score, kind, cover_url,
+    anime_id, shikimori_id, score, kind, status, cover_url,
     search_query, updated_at, is_manual_match
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 ON CONFLICT(anime_id)
 DO UPDATE SET
     shikimori_id = excluded.shikimori_id,
     score = excluded.score,
     kind = excluded.kind,
+    status = excluded.status,
     cover_url = excluded.cover_url,
     search_query = excluded.search_query,
     updated_at = excluded.updated_at,
