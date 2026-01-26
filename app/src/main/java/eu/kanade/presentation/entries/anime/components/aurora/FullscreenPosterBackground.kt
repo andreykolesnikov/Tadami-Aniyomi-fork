@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import tachiyomi.domain.entries.anime.model.Anime
-import tachiyomi.domain.entries.anime.model.asAnimeCover
 
 /**
  * Fixed fullscreen poster background with scroll-based dimming and blur effects.
@@ -27,6 +26,7 @@ import tachiyomi.domain.entries.anime.model.asAnimeCover
  * @param anime Anime object containing cover information
  * @param scrollOffset Current scroll offset from LazyListState
  * @param firstVisibleItemIndex Current first visible item index from LazyListState
+ * @param resolvedCoverUrl Resolved cover URL to display (null to skip loading)
  */
 @Composable
 fun FullscreenPosterBackground(
@@ -34,6 +34,7 @@ fun FullscreenPosterBackground(
     scrollOffset: Int,
     firstVisibleItemIndex: Int,
     modifier: Modifier = Modifier,
+    resolvedCoverUrl: String?,
 ) {
     val context = LocalContext.current
 
@@ -58,33 +59,20 @@ fun FullscreenPosterBackground(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        // Layer 1: Thumbnail (always visible immediately, cached)
-        AsyncImage(
-            model = remember(anime.thumbnailUrl) {
-                ImageRequest.Builder(context)
-                    .data(anime.thumbnailUrl)
-                    .build()
-            },
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .blur(blurAmount),
-        )
-
-        // Layer 2: Full quality poster (loads in background, instantly replaces when ready)
-        AsyncImage(
-            model = remember(anime.id, anime.coverLastModified) {
-                ImageRequest.Builder(context)
-                    .data(anime.asAnimeCover())
-                    .build()
-            },
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .blur(blurAmount),
-        )
+        if (resolvedCoverUrl != null) {
+            AsyncImage(
+                model = remember(resolvedCoverUrl, anime.id, anime.coverLastModified) {
+                    ImageRequest.Builder(context)
+                        .data(resolvedCoverUrl)
+                        .build()
+                },
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .blur(blurAmount),
+            )
+        }
 
         // Base gradient overlay (always present)
         Box(

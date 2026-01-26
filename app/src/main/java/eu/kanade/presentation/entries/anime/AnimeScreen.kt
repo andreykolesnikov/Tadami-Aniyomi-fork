@@ -108,6 +108,28 @@ import uy.kohesive.injekt.api.get
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 
+/**
+ * Parses the original title from the description field.
+ * Looks for patterns like "Original: Title" or "Оригинал: Title".
+ */
+private fun parseOriginalTitle(description: String?): String? {
+    if (description.isNullOrBlank()) return null
+
+    val patterns = listOf(
+        Regex("""Original:\s*([^\n]+)""", RegexOption.IGNORE_CASE),
+        Regex("""Оригинал:\s*([^\n]+)""", RegexOption.IGNORE_CASE),
+    )
+
+    for (pattern in patterns) {
+        val match = pattern.find(description)
+        if (match != null) {
+            return match.groupValues[1].trim()
+        }
+    }
+
+    return null
+}
+
 @Composable
 fun AnimeScreen(
     state: AnimeScreenModel.State.Success,
@@ -168,9 +190,13 @@ fun AnimeScreen(
     onDubbingClicked: (() -> Unit)? = null,
     selectedDubbing: String? = null,
     onDownloadLongClick: ((Episode) -> Unit)? = null,
+
+    // Shikimori retry
+    onRetryShikimori: () -> Unit,
 ) {
     val uiPreferences = Injekt.get<eu.kanade.domain.ui.UiPreferences>()
     val theme by uiPreferences.appTheme().collectAsState()
+    val useShikimoriCovers by uiPreferences.useShikimoriCovers().collectAsState()
 
     if (theme.isAuroraStyle && !isTabletUi) {
         AnimeScreenAuroraImpl(
@@ -215,6 +241,8 @@ fun AnimeScreen(
             onDubbingClicked = onDubbingClicked,
             selectedDubbing = selectedDubbing,
             onDownloadLongClick = onDownloadLongClick,
+            onRetryShikimori = onRetryShikimori,
+            useShikimoriCovers = useShikimoriCovers,
         )
         return
     }
@@ -274,6 +302,7 @@ fun AnimeScreen(
             onClickContinueWatching = onContinueWatchingClicked,
             onDubbingClicked = onDubbingClicked,
             selectedDubbing = selectedDubbing,
+            useShikimoriCovers = useShikimoriCovers,
         )
     } else {
         AnimeScreenLargeImpl(
@@ -318,6 +347,7 @@ fun AnimeScreen(
             onClickContinueWatching = onContinueWatchingClicked,
             onDubbingClicked = onDubbingClicked,
             selectedDubbing = selectedDubbing,
+            useShikimoriCovers = useShikimoriCovers,
         )
     }
 }
@@ -383,7 +413,31 @@ private fun AnimeScreenSmallImpl(
     // Dubbing selection
     onDubbingClicked: (() -> Unit)?,
     selectedDubbing: String?,
+
+    // Shikimori
+    useShikimoriCovers: Boolean,
 ) {
+    val uiPreferences = remember { Injekt.get<eu.kanade.domain.ui.UiPreferences>() }
+    val showOriginalTitle by uiPreferences.showOriginalTitle().collectAsState()
+    val originalTitle = remember(state.anime.description) {
+        parseOriginalTitle(state.anime.description)
+    }
+    val displayTitle = if (showOriginalTitle && originalTitle != null) {
+        "${state.anime.title} ($originalTitle)"
+    } else {
+        state.anime.title
+    }
+
+    val resolvedCoverUrl = remember(
+        state.anime,
+        state.isShikimoriLoading,
+        state.shikimoriError,
+        state.shikimoriMetadata,
+        useShikimoriCovers,
+    ) {
+        resolveCoverUrl(state, useShikimoriCovers)
+    }
+
     val density = LocalDensity.current
     val offsetGridPaddingPx = with(density) { GRID_PADDING.roundToPx() }
     val gridSize = remember(state.anime) { state.anime.seasonDisplayGridSize }
@@ -439,7 +493,7 @@ private fun AnimeScreenSmallImpl(
                     label = "Top Bar Background",
                 )
                 EntryToolbar(
-                    title = state.anime.title,
+                    title = displayTitle,
                     hasFilters = hasFilters,
                     navigateUp = navigateUp,
                     onClickFilter = onFilterClicked,
@@ -543,6 +597,7 @@ private fun AnimeScreenSmallImpl(
                             onCoverClick = onCoverClicked,
                             doSearch = onSearch,
                             modifier = Modifier.ignorePadding(offsetGridPaddingPx),
+                            resolvedCoverUrl = resolvedCoverUrl,
                         )
                     }
 
@@ -734,7 +789,31 @@ fun AnimeScreenLargeImpl(
     // Dubbing selection
     onDubbingClicked: (() -> Unit)?,
     selectedDubbing: String?,
+
+    // Shikimori
+    useShikimoriCovers: Boolean,
 ) {
+    val uiPreferences = remember { Injekt.get<eu.kanade.domain.ui.UiPreferences>() }
+    val showOriginalTitle by uiPreferences.showOriginalTitle().collectAsState()
+    val originalTitle = remember(state.anime.description) {
+        parseOriginalTitle(state.anime.description)
+    }
+    val displayTitle = if (showOriginalTitle && originalTitle != null) {
+        "${state.anime.title} ($originalTitle)"
+    } else {
+        state.anime.title
+    }
+
+    val resolvedCoverUrl = remember(
+        state.anime,
+        state.isShikimoriLoading,
+        state.shikimoriError,
+        state.shikimoriMetadata,
+        useShikimoriCovers,
+    ) {
+        resolveCoverUrl(state, useShikimoriCovers)
+    }
+
     val layoutDirection = LocalLayoutDirection.current
     val density = LocalDensity.current
 
@@ -779,7 +858,7 @@ fun AnimeScreenLargeImpl(
                 }
                 EntryToolbar(
                     modifier = Modifier.onSizeChanged { topBarHeight = it.height },
-                    title = state.anime.title,
+                    title = displayTitle,
                     hasFilters = hasFilters,
                     navigateUp = navigateUp,
                     onClickFilter = onFilterButtonClicked,
@@ -878,6 +957,7 @@ fun AnimeScreenLargeImpl(
                                 isStubSource = remember { state.source is StubAnimeSource },
                                 onCoverClick = onCoverClicked,
                                 doSearch = onSearch,
+                                resolvedCoverUrl = resolvedCoverUrl,
                             )
                             AnimeActionRow(
                                 favorite = state.anime.favorite,
@@ -1191,6 +1271,29 @@ private fun onEpisodeItemClick(
         episodeItem.selected -> onToggleSelection(false)
         isAnyEpisodeSelected -> onToggleSelection(true)
         else -> onEpisodeClicked(episodeItem.episode, false)
+    }
+}
+
+private fun resolveCoverUrl(
+    state: AnimeScreenModel.State.Success,
+    useShikimoriCovers: Boolean,
+): String? {
+    if (!useShikimoriCovers) {
+        return state.anime.thumbnailUrl
+    }
+
+    if (state.isShikimoriLoading) {
+        return null
+    }
+
+    val shikimoriCoverUrl = state.shikimoriMetadata?.coverUrl?.takeIf { it.isNotBlank() }
+    return when (state.shikimoriError) {
+        null -> shikimoriCoverUrl ?: state.anime.thumbnailUrl
+        AnimeScreenModel.ShikimoriError.NetworkError,
+        AnimeScreenModel.ShikimoriError.NotFound,
+        AnimeScreenModel.ShikimoriError.NotAuthenticated,
+        AnimeScreenModel.ShikimoriError.Disabled,
+        -> state.anime.thumbnailUrl
     }
 }
 
