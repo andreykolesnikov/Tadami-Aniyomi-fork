@@ -52,6 +52,22 @@ class AnimeBackgroundCache(private val context: Context) {
     }
 
     /**
+     * Saves the given stream as the anime's background to cache.
+     *
+     * @param backgroundUrl the background url.
+     * @param inputStream the stream to copy.
+     * @throws IOException if there's any error.
+     */
+    @Throws(IOException::class)
+    fun setBackgroundToCache(backgroundUrl: String, inputStream: InputStream) {
+        val file = getBackgroundFile(backgroundUrl) ?: return
+        file.parentFile?.mkdirs()
+        file.outputStream().use {
+            inputStream.copyTo(it)
+        }
+    }
+
+    /**
      * Saves the given stream as the anime's custom background to cache.
      *
      * @param anime the anime.

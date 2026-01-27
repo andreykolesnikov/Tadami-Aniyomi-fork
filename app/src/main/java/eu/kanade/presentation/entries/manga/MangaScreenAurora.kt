@@ -132,7 +132,7 @@ fun MangaScreenAuroraImpl(
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Fixed background poster
-        if (manga.initialized && !state.isRefreshingData) {
+        if (manga.initialized) {
             FullscreenPosterBackground(
                 manga = manga,
                 scrollOffset = scrollOffset,

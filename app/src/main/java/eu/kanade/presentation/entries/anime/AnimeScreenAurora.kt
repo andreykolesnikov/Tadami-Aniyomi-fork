@@ -70,6 +70,7 @@ import eu.kanade.presentation.entries.anime.components.aurora.AnimeInfoCard
 import eu.kanade.presentation.entries.anime.components.aurora.EpisodesHeader
 import eu.kanade.presentation.entries.anime.components.aurora.FullscreenPosterBackground
 import eu.kanade.presentation.theme.AuroraTheme
+import eu.kanade.tachiyomi.data.cache.AnimeBackgroundCache
 import eu.kanade.tachiyomi.ui.entries.anime.AnimeScreenModel
 import eu.kanade.tachiyomi.ui.entries.anime.EpisodeList
 import tachiyomi.domain.items.episode.model.Episode
@@ -78,6 +79,8 @@ import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.i18n.stringResource
 import java.time.Instant
 import kotlinx.coroutines.launch
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -142,6 +145,7 @@ fun AnimeScreenAuroraImpl(
         resolveCoverUrl(state, useShikimoriCovers)
     }
 
+    val backgroundCache = remember { Injekt.get<AnimeBackgroundCache>() }
     val lazyListState = rememberLazyListState()
     val scrollOffset by remember { derivedStateOf { lazyListState.firstVisibleItemScrollOffset } }
     val firstVisibleItemIndex by remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
@@ -183,11 +187,15 @@ fun AnimeScreenAuroraImpl(
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Fixed background poster
+        val cachedCoverFile = remember(resolvedCoverUrl) {
+            resolvedCoverUrl?.let { backgroundCache.getBackgroundFile(it) }?.takeIf { it.exists() }
+        }
+        val posterModel = cachedCoverFile ?: resolvedCoverUrl
         FullscreenPosterBackground(
             anime = anime,
             scrollOffset = scrollOffset,
             firstVisibleItemIndex = firstVisibleItemIndex,
-            resolvedCoverUrl = resolvedCoverUrl,
+            posterModel = posterModel,
         )
 
         // Scrollable content
@@ -514,13 +522,17 @@ private fun resolveCoverUrl(
         return state.anime.thumbnailUrl
     }
 
+    val shikimoriCoverUrl = state.shikimoriMetadata?.coverUrl?.takeIf { it.isNotBlank() }
+    if (shikimoriCoverUrl != null) {
+        return shikimoriCoverUrl
+    }
+
     if (state.isShikimoriLoading) {
         return null
     }
 
-    val shikimoriCoverUrl = state.shikimoriMetadata?.coverUrl?.takeIf { it.isNotBlank() }
     return when (state.shikimoriError) {
-        null -> shikimoriCoverUrl ?: state.anime.thumbnailUrl
+        null -> state.anime.thumbnailUrl
         AnimeScreenModel.ShikimoriError.NetworkError,
         AnimeScreenModel.ShikimoriError.NotFound,
         AnimeScreenModel.ShikimoriError.NotAuthenticated,

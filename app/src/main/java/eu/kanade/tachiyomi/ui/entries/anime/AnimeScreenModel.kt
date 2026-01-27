@@ -19,6 +19,7 @@ import eu.kanade.domain.entries.anime.interactor.UpdateAnime
 import eu.kanade.domain.entries.anime.model.downloadedFilter
 import eu.kanade.domain.entries.anime.model.seasonDownloadedFilter
 import eu.kanade.domain.entries.anime.model.toSAnime
+import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.domain.items.episode.interactor.SetSeenStatus
 import eu.kanade.domain.items.episode.interactor.SyncEpisodesWithSource
 import eu.kanade.domain.track.anime.interactor.AddAnimeTracks
@@ -34,12 +35,15 @@ import eu.kanade.tachiyomi.animesource.UnmeteredSource
 import eu.kanade.tachiyomi.animesource.model.FetchType
 import eu.kanade.tachiyomi.animesource.model.SAnime
 import eu.kanade.tachiyomi.animesource.model.Video
+import eu.kanade.tachiyomi.data.cache.AnimeBackgroundCache
 import eu.kanade.tachiyomi.data.download.anime.AnimeDownloadCache
 import eu.kanade.tachiyomi.data.download.anime.AnimeDownloadManager
 import eu.kanade.tachiyomi.data.download.anime.model.AnimeDownload
 import eu.kanade.tachiyomi.data.track.EnhancedAnimeTracker
 import eu.kanade.tachiyomi.data.track.TrackerManager
+import eu.kanade.tachiyomi.network.NetworkHelper
 import eu.kanade.tachiyomi.network.HttpException
+import eu.kanade.tachiyomi.network.get
 import eu.kanade.tachiyomi.ui.entries.anime.track.AnimeTrackItem
 import eu.kanade.tachiyomi.ui.player.settings.GesturePreferences
 import eu.kanade.tachiyomi.ui.player.settings.PlayerPreferences
@@ -145,6 +149,9 @@ class AnimeScreenModel(
     private val preferenceStore: tachiyomi.core.common.preference.PreferenceStore = Injekt.get(),
     private val getShikimoriMetadata: eu.kanade.domain.shikimori.interactor.GetShikimoriMetadata = Injekt.get(),
     private val shikimoriMetadataCache: tachiyomi.data.shikimori.ShikimoriMetadataCache = Injekt.get(),
+    private val uiPreferences: UiPreferences = Injekt.get(),
+    private val backgroundCache: AnimeBackgroundCache = Injekt.get(),
+    private val networkHelper: NetworkHelper = Injekt.get(),
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
 ) : StateScreenModel<AnimeScreenModel.State>(State.Loading) {
 
@@ -1548,13 +1555,32 @@ class AnimeScreenModel(
     private suspend fun loadShikimoriMetadata(animeId: Long) {
         val currentState = successState ?: return
 
-        // Show loading
+        val cachedMetadata = shikimoriMetadataCache.get(animeId)
+        val cachedCoverUrl = cachedMetadata?.coverUrl
+        if (!cachedCoverUrl.isNullOrBlank()) {
+            screenModelScope.launchIO {
+                cacheShikimoriCoverIfNeeded(currentState.anime, cachedCoverUrl)
+            }
+        }
+
+        // Show loading while keeping cached metadata (if any)
         updateSuccessState {
-            it.copy(isShikimoriLoading = true, shikimoriError = null)
+            it.copy(
+                shikimoriMetadata = cachedMetadata,
+                isShikimoriLoading = true,
+                shikimoriError = null,
+            )
         }
 
         try {
             val metadata = getShikimoriMetadata.await(currentState.anime)
+
+            val metadataCoverUrl = metadata?.coverUrl
+            if (!metadataCoverUrl.isNullOrBlank()) {
+                screenModelScope.launchIO {
+                    cacheShikimoriCoverIfNeeded(currentState.anime, metadataCoverUrl)
+                }
+            }
 
             updateSuccessState {
                 it.copy(
@@ -1587,6 +1613,24 @@ class AnimeScreenModel(
                     shikimoriError = error,
                 )
             }
+        }
+    }
+
+    private suspend fun cacheShikimoriCoverIfNeeded(anime: Anime, coverUrl: String) {
+        if (!uiPreferences.useShikimoriCovers().get()) return
+        if (coverUrl.isBlank()) return
+        if (backgroundCache.getCustomBackgroundFile(anime.id).exists()) return
+
+        val cacheFile = backgroundCache.getBackgroundFile(coverUrl) ?: return
+        if (cacheFile.exists()) return
+
+        try {
+            networkHelper.client.get(coverUrl).use { response ->
+                val body = response.body ?: return
+                backgroundCache.setBackgroundToCache(coverUrl, body.byteStream())
+            }
+        } catch (e: Exception) {
+            logcat(LogPriority.ERROR, e) { "Failed to cache Shikimori cover for anime ${anime.id}" }
         }
     }
 
