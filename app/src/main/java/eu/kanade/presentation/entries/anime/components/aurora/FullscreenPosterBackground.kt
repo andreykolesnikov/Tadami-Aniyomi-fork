@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
@@ -61,7 +63,7 @@ fun FullscreenPosterBackground(
 
     Box(modifier = modifier.fillMaxSize()) {
         if (resolvedCoverUrl != null) {
-            var model by remember(resolvedCoverUrl) { androidx.compose.runtime.mutableStateOf(resolvedCoverUrl) }
+            var model by remember(resolvedCoverUrl) { mutableStateOf(resolvedCoverUrl) }
 
             AsyncImage(
                 model = remember(model, anime.id, anime.coverLastModified) {
