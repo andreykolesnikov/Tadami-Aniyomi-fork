@@ -55,6 +55,7 @@ class AchievementCalculator(
 
             val streak = streakChecker.getCurrentStreak()
             logcat(LogPriority.INFO) { "Current streak: $streak days" }
+            println("DEBUG: streak = $streak")
 
             val libraryCounts = getLibraryCounts()
 
@@ -72,7 +73,10 @@ class AchievementCalculator(
                         mangaSourceCount,
                         animeSourceCount,
                     )
-                    AchievementType.STREAK -> streak
+                    AchievementType.STREAK -> {
+                        println("DEBUG: Calculating streak for ${achievement.id}, progress=$streak")
+                        streak
+                    }
                     AchievementType.LIBRARY -> calculateLibraryProgress(achievement, libraryCounts)
                     AchievementType.BALANCED -> calculateBalancedProgress(mangaChapters, animeEpisodes)
                     AchievementType.META -> 0

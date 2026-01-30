@@ -1,10 +1,10 @@
 package tachiyomi.data.achievement.database
 
-import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import app.cash.sqldelight.db.SqlDriver
 import tachiyomi.data.achievement.AchievementsDatabase as SqlDelightAchievementsDatabase
 
 class AchievementsDatabase(
-    private val driver: AndroidSqliteDriver,
+    private val driver: SqlDriver,
 ) {
 
     val achievementsQueries

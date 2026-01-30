@@ -42,3 +42,18 @@ build_errors.txt
 build_errors_utf8.txt
 .agents/
 .omc/
+
+# MCP & AI tools
+.mcp.json
+CLAUDE.md
+
+# Node.js
+package-lock.json
+node_modules/
+
+# Temporary files
+temp_result.xml
+*.tmp
+
+# Conductor tracks (local metadata)
+conductor/tracks/

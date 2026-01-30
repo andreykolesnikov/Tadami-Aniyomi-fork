@@ -57,4 +57,5 @@ dependencies {
 
     testImplementation(libs.bundles.test)
     testImplementation(kotlinx.coroutines.test)
+    testImplementation(libs.sqldelight.sqlite.driver)
 }

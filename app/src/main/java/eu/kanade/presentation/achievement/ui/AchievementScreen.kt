@@ -46,6 +46,7 @@ import eu.kanade.presentation.achievement.components.AchievementCard
 import eu.kanade.presentation.achievement.components.AchievementCategoryTabs
 import eu.kanade.presentation.achievement.components.AchievementContent
 import eu.kanade.presentation.achievement.components.AchievementStatsComparison
+import eu.kanade.presentation.achievement.components.ActivityStreakIndicator
 import eu.kanade.presentation.achievement.screenmodel.AchievementScreenState
 import eu.kanade.presentation.theme.AuroraTheme
 import tachiyomi.domain.achievement.model.Achievement
@@ -155,6 +156,18 @@ fun AchievementScreen(
                             AchievementActivityGraph(
                                 yearlyStats = state.yearlyStats,
                             )
+                        }
+
+                        // Индикатор серии
+                        item {
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            ActivityStreakIndicator(
+                                currentStreak = state.currentStreak,
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
                         }
 
                         // Табы категорий
@@ -395,5 +408,18 @@ private fun AuroraStatCard(
                 )
             }
         }
+    }
+}
+
+/**
+ * Format minutes to hours and minutes string
+ */
+private fun formatTimeMinutes(minutes: Int): String {
+    val hours = minutes / 60
+    val mins = minutes % 60
+    return when {
+        hours > 0 && mins > 0 -> "${hours}ч ${mins}м"
+        hours > 0 -> "${hours}ч"
+        else -> "${mins}м"
     }
 }

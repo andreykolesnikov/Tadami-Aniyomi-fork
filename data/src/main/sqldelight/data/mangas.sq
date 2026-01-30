@@ -197,3 +197,8 @@ getLibraryCount:
 SELECT COUNT(*)
 FROM mangas
 WHERE favorite = 1;
+
+getCompletedMangaCount:
+SELECT COUNT(*) FROM mangas
+WHERE favorite = 1
+AND status = 2;

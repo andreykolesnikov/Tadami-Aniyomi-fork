@@ -102,17 +102,21 @@ class ActivityDataRepositoryImpl(
     override suspend fun recordReading(id: Long, chaptersCount: Int, durationMs: Long) {
         val today = LocalDate.now().format(dateFormatter)
         val keySet = "read_ids_$today"
+        val durationKeySet = "read_duration_ids_$today"
         val existingIds = prefs.getStringSet(keySet, emptySet()) ?: emptySet()
-        
+        val existingDurationIds = prefs.getStringSet(durationKeySet, emptySet()) ?: emptySet()
+
         prefs.edit {
             if (!existingIds.contains(id.toString())) {
                 val currentCount = prefs.getInt(KEY_CHAPTERS_PREFIX + today, 0)
                 putInt(KEY_CHAPTERS_PREFIX + today, currentCount + chaptersCount)
                 putStringSet(keySet, existingIds + id.toString())
             }
-            if (durationMs > 0) {
+            // ИСПРАВЛЕНИЕ: Записываем duration только один раз для каждого id
+            if (durationMs > 0 && !existingDurationIds.contains(id.toString())) {
                 val currentDuration = prefs.getLong(KEY_DURATION_PREFIX + today, 0L)
                 putLong(KEY_DURATION_PREFIX + today, currentDuration + durationMs)
+                putStringSet(durationKeySet, existingDurationIds + id.toString())
             }
         }
     }
@@ -120,7 +124,9 @@ class ActivityDataRepositoryImpl(
     override suspend fun recordWatching(id: Long, episodesCount: Int, durationMs: Long) {
         val today = LocalDate.now().format(dateFormatter)
         val keySet = "watch_ids_$today"
+        val durationKeySet = "watch_duration_ids_$today"
         val existingIds = prefs.getStringSet(keySet, emptySet()) ?: emptySet()
+        val existingDurationIds = prefs.getStringSet(durationKeySet, emptySet()) ?: emptySet()
 
         prefs.edit {
             if (!existingIds.contains(id.toString())) {
@@ -128,9 +134,11 @@ class ActivityDataRepositoryImpl(
                 putInt(KEY_EPISODES_PREFIX + today, currentCount + episodesCount)
                 putStringSet(keySet, existingIds + id.toString())
             }
-            if (durationMs > 0) {
+            // ИСПРАВЛЕНИЕ: Записываем duration только один раз
+            if (durationMs > 0 && !existingDurationIds.contains(id.toString())) {
                 val currentDuration = prefs.getLong(KEY_DURATION_PREFIX + today, 0L)
                 putLong(KEY_DURATION_PREFIX + today, currentDuration + durationMs)
+                putStringSet(durationKeySet, existingDurationIds + id.toString())
             }
         }
     }

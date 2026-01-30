@@ -128,5 +128,26 @@ sealed interface AchievementScreenState {
 
         val totalCount: Int
             get() = achievements.size
+
+        val currentStreak: Int
+            get() = calculateCurrentStreak(activityData)
+
+        private fun calculateCurrentStreak(activities: List<DayActivity>): Int {
+            var streak = 0
+            val today = java.time.LocalDate.now()
+
+            for (i in 0 until activities.size) {
+                val date = today.minusDays(i.toLong())
+                val activity = activities.find { it.date == date }
+
+                if (activity != null && activity.level > 0) {
+                    streak++
+                } else {
+                    break
+                }
+            }
+
+            return streak
+        }
     }
 }

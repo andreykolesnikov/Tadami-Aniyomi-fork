@@ -223,3 +223,8 @@ getLibraryCount:
 SELECT COUNT(*)
 FROM animes
 WHERE favorite = 1;
+
+getCompletedAnimeCount:
+SELECT COUNT(*) FROM animes
+WHERE favorite = 1
+AND status = 2;
