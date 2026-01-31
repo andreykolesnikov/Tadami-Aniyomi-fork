@@ -124,6 +124,7 @@ import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.util.lang.launchIO
 import tachiyomi.core.common.util.lang.withUIContext
 import tachiyomi.core.common.util.system.logcat
+import tachiyomi.domain.achievement.repository.ActivityDataRepository
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.domain.release.interactor.GetApplicationRelease
 import tachiyomi.domain.release.service.AppUpdatePreferences
@@ -145,9 +146,13 @@ class MainActivity : BaseActivity() {
 
     private val getAnimeIncognitoState: GetAnimeIncognitoState by injectLazy()
     private val getMangaIncognitoState: GetMangaIncognitoState by injectLazy()
+    private val activityDataRepository: ActivityDataRepository by injectLazy()
 
     // To be checked by splash screen. If true then splash screen will be removed.
     var ready = false
+
+    // Session time tracking for achievements
+    private var appSessionStartTime: Long? = null
 
     private var navigator: Navigator? = null
 
@@ -374,6 +379,27 @@ class MainActivity : BaseActivity() {
                 ExternalIntents.externalIntents.onActivityResult(result.data)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Start session time tracking
+        appSessionStartTime = System.currentTimeMillis()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Save session time to activity data
+        appSessionStartTime?.let { startTime ->
+            val duration = System.currentTimeMillis() - startTime
+            // Only record if session was longer than 5 seconds (filter out accidental opens)
+            if (duration > 5000) {
+                lifecycleScope.launch {
+                    activityDataRepository.recordAppSession(duration)
+                }
+            }
+        }
+        appSessionStartTime = null
     }
 
     override fun onStop() {

@@ -29,6 +29,8 @@ import tachiyomi.i18n.MR
 import tachiyomi.i18n.aniyomi.AYMR
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.util.collectAsState
+import tachiyomi.data.achievement.handler.AchievementHandler
+import tachiyomi.data.achievement.model.AchievementEvent
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import java.time.LocalDate
@@ -83,7 +85,12 @@ object SettingsAppearanceScreen : SearchableSettings {
                         AppThemePreferenceWidget(
                             value = appTheme,
                             amoled = amoled,
-                            onItemClick = { appThemePref.set(it) },
+                            onItemClick = {
+                                appThemePref.set(it)
+                                // Track theme change for achievement
+                                val achievementHandler = Injekt.get<AchievementHandler>()
+                                achievementHandler.trackFeatureUsed(AchievementEvent.Feature.THEME_CHANGE)
+                            },
                         )
                     }
                 },
@@ -203,6 +210,11 @@ object SettingsAppearanceScreen : SearchableSettings {
                     preference = uiPreferences.showOriginalTitle(),
                     title = stringResource(AYMR.strings.pref_show_original_title),
                     subtitle = stringResource(AYMR.strings.pref_show_original_title_summary),
+                ),
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = uiPreferences.showAchievementNotifications(),
+                    title = stringResource(AYMR.strings.pref_show_achievement_notifications),
+                    subtitle = stringResource(AYMR.strings.pref_show_achievement_notifications_summary),
                 ),
             ),
         )

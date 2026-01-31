@@ -62,6 +62,8 @@ class UiPreferences(
 
     fun showOriginalTitle() = preferenceStore.getBoolean("show_original_title", true)
 
+    fun showAchievementNotifications() = preferenceStore.getBoolean("show_achievement_notifications", true)
+
     companion object {
         fun dateFormat(format: String): DateTimeFormatter = when (format) {
             "" -> DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)

@@ -11,6 +11,7 @@ interface ActivityDataRepository {
     suspend fun getPreviousMonthStats(): MonthStats
     suspend fun recordReading(id: Long, chaptersCount: Int, durationMs: Long = 0)
     suspend fun recordWatching(id: Long, episodesCount: Int, durationMs: Long = 0)
+    suspend fun recordAppSession(durationMs: Long)
     suspend fun recordAppOpen()
     suspend fun recordAchievementUnlock()
     suspend fun getLastTwelveMonthsStats(): List<Pair<java.time.YearMonth, MonthStats>>

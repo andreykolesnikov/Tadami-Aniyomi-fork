@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -323,7 +324,7 @@ private fun AuroraStatsHeader(
             value = "$unlockedCount/$totalCount",
             label = unlockedLabel,
             modifier = Modifier.weight(1f),
-            iconTint = colors.progressCyan,
+            iconTint = colors.accent,
             progressFraction = unlockedFraction,
         )
     }
@@ -346,7 +347,7 @@ private fun AuroraStatCard(
 
     Box(
         modifier = modifier
-            .height(72.dp)
+            .height(80.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(
                 brush = Brush.verticalGradient(
@@ -369,9 +370,10 @@ private fun AuroraStatCard(
                     )
                 }
             }
-            .padding(top = 12.dp, bottom = 4.dp, start = 16.dp, end = 16.dp),
+            .padding(vertical = 12.dp, horizontal = 16.dp),
     ) {
         Row(
+            modifier = Modifier.fillMaxHeight(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp),
         ) {

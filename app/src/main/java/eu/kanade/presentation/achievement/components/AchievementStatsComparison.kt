@@ -140,8 +140,8 @@ fun AchievementStatsComparison(
                         )
                         StatItem(
                             icon = Icons.Default.Movie,
-                            iconBackground = colors.gradientPurple.copy(alpha = 0.15f),
-                            iconTint = colors.gradientPurple,
+                            iconBackground = colors.accent.copy(alpha = 0.15f),
+                            iconTint = colors.accent,
                             label = "Эпизодов просмотрено",
                             currentValue = currentMonth.episodesWatched,
                             previousValue = previousMonth.episodesWatched,
@@ -156,8 +156,8 @@ fun AchievementStatsComparison(
                     ) {
                         StatItem(
                             icon = Icons.Default.AccessTime,
-                            iconBackground = colors.progressCyan.copy(alpha = 0.15f),
-                            iconTint = colors.progressCyan,
+                            iconBackground = colors.accent.copy(alpha = 0.15f),
+                            iconTint = colors.accent,
                             label = "Время в приложении",
                             currentValue = currentMonth.timeInAppMinutes,
                             previousValue = previousMonth.timeInAppMinutes,
@@ -166,8 +166,8 @@ fun AchievementStatsComparison(
                         )
                         StatItem(
                             icon = Icons.Default.EmojiEvents,
-                            iconBackground = colors.achievementGold.copy(alpha = 0.15f),
-                            iconTint = colors.achievementGold,
+                            iconBackground = colors.accent.copy(alpha = 0.15f),
+                            iconTint = colors.accent,
                             label = "Достижений получено",
                             currentValue = currentMonth.achievementsUnlocked,
                             previousValue = previousMonth.achievementsUnlocked,

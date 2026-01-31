@@ -685,8 +685,16 @@
     <string name="aurora_no_description">Нет описания</string>
 
     <!-- Original Title -->
+    <!-- Metadata -->
+    <string name="pref_category_metadata">Метаданные аниме</string>
+    <string name="pref_anime_metadata_source">Источник метаданных</string>
+    <string name="pref_anime_metadata_source_summary">Источник для постеров, рейтингов и статуса аниме</string>
+
+    <!-- Original Title -->
     <string name="pref_show_original_title">Показывать оригинальное название</string>
     <string name="pref_show_original_title_summary">Отображать оригинальное название из описания в скобках</string>
+    <string name="pref_show_achievement_notifications">Уведомления о достижениях</string>
+    <string name="pref_show_achievement_notifications_summary">Показывать всплывающее окно при получении достижений</string>
 
     <!-- Shikimori Integration -->
     <string name="pref_use_shikimori_rating">Использовать рейтинг и тип из Shikimori</string>

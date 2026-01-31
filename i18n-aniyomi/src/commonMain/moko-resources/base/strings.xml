@@ -763,6 +763,8 @@
     <string name="pref_use_shikimori_covers_summary">Replace anime covers with high-quality images from Shikimori.one</string>
     <string name="pref_show_original_title">Show original title</string>
     <string name="pref_show_original_title_summary">Display original title from description in parentheses</string>
+    <string name="pref_show_achievement_notifications">Achievement notifications</string>
+    <string name="pref_show_achievement_notifications_summary">Show popup when unlocking achievements</string>
 
     <!-- Achievements -->
     <string name="label_achievements">Achievements</string>
