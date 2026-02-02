@@ -30,7 +30,7 @@ android {
         // Put these fields in acra.properties
         // val acraProperties = Properties()
         // rootProject.file("acra.properties")
-        //     .takeIf { it.exists() }
+r        //     .takeIf { it.exists() }
         //     ?.let { acraProperties.load(FileInputStream(it)) }
         // val acraUri = acraProperties.getProperty("ACRA_URI", "")
         // val acraLogin = acraProperties.getProperty("ACRA_LOGIN", "")
