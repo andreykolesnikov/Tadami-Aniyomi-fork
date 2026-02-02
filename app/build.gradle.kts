@@ -19,8 +19,8 @@ android {
     defaultConfig {
         applicationId = "com.tadami.aurora"
 
-        versionCode = 135
-        versionName = "0.22"
+        versionCode = 136
+        versionName = "0.23"
 
         buildConfigField("String", "COMMIT_COUNT", "\"${getCommitCount()}\"")
         buildConfigField("String", "COMMIT_SHA", "\"${getGitSha()}\"")
@@ -30,7 +30,7 @@ android {
         // Put these fields in acra.properties
         // val acraProperties = Properties()
         // rootProject.file("acra.properties")
-r        //     .takeIf { it.exists() }
+        //     .takeIf { it.exists() }
         //     ?.let { acraProperties.load(FileInputStream(it)) }
         // val acraUri = acraProperties.getProperty("ACRA_URI", "")
         // val acraLogin = acraProperties.getProperty("ACRA_LOGIN", "")
