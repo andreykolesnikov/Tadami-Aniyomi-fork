@@ -56,7 +56,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -375,6 +379,7 @@ private fun AnimeHomeHub(
         lastSourceName = lastSourceName,
         contentPadding = contentPadding,
         heroActionLabelRes = AYMR.strings.aurora_play,
+        heroProgressLabelRes = AYMR.strings.aurora_episode_progress,
         onEntryClick = { navigator.push(AnimeScreen(it)) },
         onPlayHero = { screenModel.playHeroEpisode(context) },
         onAvatarClick = { photoPickerLauncher.launch("image/*") },
@@ -437,6 +442,7 @@ private fun MangaHomeHub(
         lastSourceName = lastSourceName,
         contentPadding = contentPadding,
         heroActionLabelRes = AYMR.strings.aurora_read,
+        heroProgressLabelRes = AYMR.strings.aurora_chapter_progress,
         onEntryClick = { navigator.push(MangaScreen(it)) },
         onPlayHero = { screenModel.readHeroChapter(context) },
         onAvatarClick = { photoPickerLauncher.launch("image/*") },
@@ -466,6 +472,7 @@ private fun HomeHubScreen(
     lastSourceName: String?,
     contentPadding: PaddingValues,
     heroActionLabelRes: dev.icerock.moko.resources.StringResource,
+    heroProgressLabelRes: dev.icerock.moko.resources.StringResource,
     onEntryClick: (Long) -> Unit,
     onPlayHero: () -> Unit,
     onAvatarClick: () -> Unit,
@@ -594,6 +601,7 @@ private fun HomeHubScreen(
                     HeroSection(
                         hero = heroData,
                         actionLabelRes = heroActionLabelRes,
+                        progressLabelRes = heroProgressLabelRes,
                         onPlayClick = onPlayHero,
                         onEntryClick = { onEntryClick(heroData.entryId) },
                     )
@@ -698,6 +706,7 @@ private fun WelcomeSection(onBrowseClick: () -> Unit, onExtensionClick: () -> Un
 private fun HeroSection(
     hero: HomeHubHero,
     actionLabelRes: dev.icerock.moko.resources.StringResource,
+    progressLabelRes: dev.icerock.moko.resources.StringResource,
     onPlayClick: () -> Unit,
     onEntryClick: () -> Unit,
 ) {
@@ -723,55 +732,46 @@ private fun HeroSection(
             modifier = Modifier.align(Alignment.BottomCenter).padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                stringResource(AYMR.strings.aurora_continue_watching_header),
-                color = colors.accent,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.background(
-                    colors.accent.copy(alpha = 0.2f),
-                    RoundedCornerShape(50),
-                ).padding(horizontal = 12.dp, vertical = 4.dp),
-            )
-            Spacer(Modifier.height(12.dp))
+            // Badge hidden as per design update
             Text(
                 hero.title,
                 color = colors.textPrimary,
                 fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily(Font(eu.kanade.tachiyomi.R.font.montserrat_bold)),
                 lineHeight = 34.sp,
+                style = TextStyle(lineBreak = LineBreak.Heading),
                 textAlign = TextAlign.Center,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(14.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                 Box(Modifier.size(6.dp).background(colors.accent, CircleShape))
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    stringResource(AYMR.strings.aurora_episode_progress, (hero.progressNumber % 1000).toInt()),
+                    stringResource(progressLabelRes, (hero.progressNumber % 1000).toInt()),
                     color = colors.textSecondary,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                 )
             }
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(24.dp))
 
             Button(
                 onClick = onPlayClick,
                 colors = ButtonDefaults.buttonColors(containerColor = colors.accent),
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
+                contentPadding = PaddingValues(start = 22.dp, end = 24.dp, top = 8.dp, bottom = 8.dp),
                 modifier = Modifier.height(52.dp),
             ) {
-                Icon(Icons.Filled.PlayArrow, null, tint = colors.textOnAccent, modifier = Modifier.size(22.dp))
+                Icon(Icons.Filled.PlayArrow, null, tint = colors.textOnAccent, modifier = Modifier.size(21.dp))
                 Spacer(Modifier.width(8.dp))
                 Text(
                     stringResource(actionLabelRes),
                     color = colors.textOnAccent,
-                    fontSize = 15.sp,
+                    fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                 )
             }
