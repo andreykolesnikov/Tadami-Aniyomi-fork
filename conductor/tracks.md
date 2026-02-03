@@ -21,8 +21,3 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Analyze and fix achievement logic, ensuring alignment with definitions through unit testing.**
   *Link: [./tracks/fix_achievement_logic_20260130/](./tracks/fix_achievement_logic_20260130/)*
-
----
-
-- [x] **Track: Hide the camera icon on the Home screen avatar once a custom user avatar has been set.**
-  *Link: [./tracks/hide_camera_icon_20260203/](./tracks/hide_camera_icon_20260203/)*
